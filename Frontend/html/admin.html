@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reporta Cusco – Panel</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body>
+<header class="topbar"><div class="brand"><h1>Panel de Administración</h1></div></header>
+<div class="layout">
+  <aside class="sidebar">
+    <nav>
+      <a class="navlink" href="index.html">Inicio</a>
+      <a class="navlink" href="admin.html">Reportes</a>
+      <a class="navlink" href="estado.html">Consultar Estado</a>
+    </nav>
+  </aside>
+  <main class="content">
+    <section class="grid cols-3">
+      <div class="card"><h3>Reportes</h3><p id="c_rep" class="tag red">0</p></div>
+      <div class="card"><h3>En proceso</h3><p id="c_proc" class="tag yellow">0</p></div>
+      <div class="card"><h3>Solucionados</h3><p id="c_sol" class="tag green">0</p></div>
+    </section>
+    <section class="card" style="margin-top:16px">
+      <h2>Listado</h2>
+      <table class="table" id="tabla"></table>
+    </section>
+  </main>
+</div>
+<script src="../js/admin.js" type="module"></script>
+</body>
+</html>
