@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión - Cusco Reporta</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- ======= HEADER ======= -->
+  <header class="navbar">
+    <div class="navbar__left">
+      <img src="../assets/logo_mtc.png" alt="Logo MTC" class="navbar__logo">
+      <img src="../assets/logo_web.jpeg" alt="Logo Cusco Reporta" class="navbar__logo">
+    </div>
+
+    <nav class="navbar__menu">
+      <a href="index.html">Inicio</a>
+      <a href="#">Registra tu denuncia</a>
+      <a href="#">Sobre nosotros</a>
+      <a href="iniciar-sesion.html">Iniciar Sesión</a>
+      <a href="#">Ayuda</a>
+    </nav>
+  </header>
+
+  <!-- ======= FORMULARIO DE LOGIN ======= -->
+  <main class="main">
+    <section class="denuncia">
+      <h1 style="background-color: #8b0000; color: white; padding: 12px 24px; border-radius: 10px; display: inline-block;">
+        INICIO DE SESION
+      </h1>
+
+      <!-- Botones -->
+      <div style="display: flex; margin: 30px auto; justify-content: center; gap: 0;">
+        <button style="background-color: #b22222; border: none; padding: 10px 20px; border-radius: 20px 0 0 20px; color: white; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+          <span>👤</span> Iniciar Sesion
+        </button>
+        <button style="background-color: #c43d3d; border: none; padding: 10px 20px; border-radius: 0 20px 20px 0; color: white; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+          Registrarse <span>🏬</span>
+        </button>
+      </div>
+
+      <!-- Formulario -->
+      <form style="max-width: 400px; margin: 0 auto;">
+        <label for="username" style="display: block; font-weight: 600; margin-bottom: 8px;">Nombre de Usuario</label>
+        <input type="text" id="username" name="username"
+          style="width: 100%; padding: 12px; background-color: #c43d3d; border: none; border-radius: 20px; margin-bottom: 20px; color: white; text-align: center; font-weight: 600;" />
+
+        <label for="password" style="display: block; font-weight: 600; margin-bottom: 8px;">Contraseña</label>
+        <input type="password" id="password" name="password"
+          style="width: 100%; padding: 12px; background-color: #c43d3d; border: none; border-radius: 20px; margin-bottom: 20px; color: white; text-align: center; font-weight: 600;" />
+        <!-- BOTÓN DE INICIAR SESIÓN -->
+        <button type="submit" class="boton red" style="margin-top: 20px;">Iniciar Sesión</button>
+        </form>
+
+      <p class="confia">¡CONFÍA EN NOSOTROS!</p>
+    </section>
+  </main>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
