@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporta Cusco</title>
+    <style>
+        :root {
+            --primary-color: #942A2A;    /* Rojo principal */
+            --secondary-color: #700505;  /* Rojo oscuro */
+            --accent-color: #e67e22;     /* Naranja para botones */
+            --light-color: #f8f9fa;
+            --dark-color: #2c3e50;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+            --border-radius: 6px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--box-shadow);
+            z-index: 100;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-image {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 10px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid white;
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .logout {
+            margin-top: 30px;
+            padding: 0 20px;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 12px 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .top-nav {
+            display: flex;
+            list-style: none;
+        }
+
+        .top-nav li {
+            margin-left: 20px;
+        }
+
+        .top-nav a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .top-nav a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Form Styles */
+        .form-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .form-col {
+            flex: 1;
+            min-width: 200px;
+            padding: 0 10px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-accent:hover {
+            background-color: #d35400;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .section-divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 25px 0;
+        }
+
+        /* Map Container */
+        .map-container {
+            height: 250px;
+            background-color: #e9ecef;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-weight: 500;
+            border: 1px dashed #adb5bd;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-in-progress {
+            background-color: #cce7ff;
+            color: #004085;
+        }
+        
+        .status-resolved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        /* Image Placeholder Styles */
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .nav-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 10px;
+            }
+            
+            .nav-item {
+                margin-bottom: 0;
+                margin-right: 10px;
+            }
+            
+            .nav-link {
+                white-space: nowrap;
+            }
+            
+            .user-profile {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .logout {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-col {
+                flex: 100%;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-content {
+                margin-bottom: 15px;
+            }
+            
+            .top-nav {
+                margin-top: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .top-nav li {
+                margin-left: 0;
+                margin-right: 15px;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <!-- Opción 1: Logo con imagen -->
+                <img src="assets/images/logo-reporta-cusco.png" alt="Reporta Cusco" class="logo-image">
+                
+                <!-- Opción 2: Si no tienes imagen, usar placeholder -->
+                <!-- <div class="image-placeholder">
+                    Logo Reporta Cusco<br>
+                    (assets/images/logo-reporta-cusco.png)
+                </div> -->
+                
+                <div class="logo-text">
+                    <h1>Reporta Cusco</h1>
+                </div>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <!-- Avatar del usuario con imagen -->
+                    <img src="assets/images/user-avatar.jpg" alt="Jose Pérez">
+                    
+                    <!-- Si no tienes imagen, usar iniciales -->
+                    <!-- <span>JP</span> -->
+                </div>
+                <div class="user-info">
+                    <h3>Jose Pérez</h3>
+                    <p>Ciudadano</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i>📋</i> Registrar Denuncia
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i>👤</i> Ver Perfil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i>📊</i> Estado de Reportes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i>🗺️</i> Mapa de Incidencias
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i>🔔</i> Notificaciones
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="logout">
+                <button class="logout-btn">
+                    <i>🚪</i> Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-content">
+                    <!-- Logo pequeño en el header -->
+                    <img src="assets/images/logo-small.png" alt="Reporta Cusco" class="header-logo">
+                    <h2>Registrar Denuncia</h2>
+                </div>
+                <ul class="top-nav">
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Sobre nosotros</a></li>
+                    <li><a href="#">Contáctenos</a></li>
+                    <li><a href="#">Ayuda</a></li>
+                </ul>
+            </header>
+            
+            <div class="form-container">
+                <h3 class="form-title">Información de la Denuncia</h3>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="fecha">Fecha</label>
+                        <input type="text" id="fecha" placeholder="dd/mm/aaaa">
+                    </div>
+                    <div class="form-col">
+                        <label for="departamento">Departamento</label>
+                        <select id="departamento">
+                            <option>Seleccione</option>
+                            <option>Cusco</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label for="provincia">Provincia</label>
+                        <select id="provincia">
+                            <option>Seleccione</option>
+                            <option>Cusco</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label for="distrito">Distrito</label>
+                        <select id="distrito">
+                            <option>Seleccione</option>
+                            <option>San Sebastián</option>
+                            <option>San Jerónimo</option>
+                            <option>Cusco</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="referencia">Referencia</label>
+                    <input type="text" id="referencia" placeholder="Ingrese referencia de ubicación">
+                </div>
+                
+                <div class="form-group">
+                    <label>Ubicar en el mapa</label>
+                    <div class="map-container">
+                        [Mapa interactivo - Seleccione ubicación]
+                    </div>
+                    <button class="btn btn-secondary">
+                        📍 Seleccionar ubicación en el mapa
+                    </button>
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <h3 class="form-title">Datos de la Víctima</h3>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="victima-nombres">Nombres</label>
+                        <input type="text" id="victima-nombres">
+                    </div>
+                    <div class="form-col">
+                        <label for="victima-apellidos">Apellidos</label>
+                        <input type="text" id="victima-apellidos">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="victima-dni">DNI</label>
+                        <input type="text" id="victima-dni">
+                    </div>
+                    <div class="form-col">
+                        <label for="victima-telefono">Teléfono</label>
+                        <input type="text" id="victima-telefono">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="victima-direccion">Dirección</label>
+                    <input type="text" id="victima-direccion">
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <h3 class="form-title">Datos del Denunciado</h3>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="denunciado-nombres">Nombres</label>
+                        <input type="text" id="denunciado-nombres">
+                    </div>
+                    <div class="form-col">
+                        <label for="denunciado-apellidos">Apellidos</label>
+                        <input type="text" id="denunciado-apellidos">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="denunciado-dni">DNI</label>
+                        <input type="text" id="denunciado-dni">
+                    </div>
+                    <div class="form-col">
+                        <label for="denunciado-telefono">Teléfono</label>
+                        <input type="text" id="denunciado-telefono">
+                    </div>
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <h3 class="form-title">Hechos</h3>
+                
+                <div class="form-group">
+                    <label for="descripcion">Descripción de los hechos</label>
+                    <textarea id="descripcion" rows="5" placeholder="Describa detalladamente los hechos ocurridos..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pruebas">Adjuntar pruebas (opcional)</label>
+                    <input type="file" id="pruebas">
+                </div>
+                
+                <div class="form-group">
+                    <button class="btn btn-accent btn-block">Enviar Denuncia</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // JavaScript básico para funcionalidades simples
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simular selección de ubicación en el mapa
+            const mapContainer = document.querySelector('.map-container');
+            const selectLocationBtn = document.querySelector('.btn-secondary');
+            
+            selectLocationBtn.addEventListener('click', function() {
+                mapContainer.innerHTML = '<p>Haga clic en el mapa para seleccionar ubicación</p>';
+                mapContainer.style.cursor = 'pointer';
+                
+                mapContainer.addEventListener('click', function() {
+                    mapContainer.innerHTML = '<p>Ubicación seleccionada ✓</p>';
+                    mapContainer.style.backgroundColor = '#d4edda';
+                    mapContainer.style.color = '#155724';
+                });
+            });
+            
+            // Manejo del formulario
+            const form = document.querySelector('.form-container');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Denuncia enviada correctamente. Recibirá un número de seguimiento.');
+            });
+        });
+    </script>
+</body>
+</html>
