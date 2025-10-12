@@ -1,204 +1,117 @@
-/* ====== RESET GENERAL ====== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
 body {
-  background-color: #f8f9fa;
-  color: #222;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ====== NAVBAR ====== */
-.navbar {
-  width: 100%;
-  background-color: #d9d9d9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 50px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.navbar__left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.navbar__logo {
-  height: 48px;
-  object-fit: contain;
-}
-
-.navbar__menu {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-
-.navbar__menu a {
-  text-decoration: none;
-  font-weight: 600;
-  color: #111;
-  transition: color 0.3s ease;
-}
-
-.navbar__menu a:hover {
-  color: #b71c1c;
-}
-
-/* ====== SECCIÓN PRINCIPAL ====== */
-.main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 50px 20px;
-}
-
-.denuncia {
-  text-align: center;
-  max-width: 950px;
-  background: #fff;
-  padding: 60px 40px;
-  border-radius: 20px;
-  box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-}
-
-.denuncia h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.denuncia p {
-  font-size: 1rem;
-  color: #444;
-  margin-bottom: 50px;
-  line-height: 1.6;
-}
-
-/* ====== OPCIONES ====== */
-.denuncia__opciones {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 70px;
-  margin-bottom: 40px;
-}
-
-.opcion {
-  text-align: center;
-}
-
-.opcion h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.icono {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
+  font-family: Arial, sans-serif;
+  margin: 0;
   background-color: #fff;
+  color: #000;
+  text-align: center;
+}
+
+/* ======= BARRA SUPERIOR ======= */
+header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  border: 10px solid transparent;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  justify-content: space-between;
+  background-color: #e5e5e5;
+  padding: 10px 40px;
 }
 
-.icono img {
-  width: 70px;
-  height: 70px;
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.icono.red {
-  border-color: #8b0000;
+.logo img {
+  height: 40px;
 }
 
-.icono.blue {
-  border-color: #004aad;
-}
-
-.icono:hover {
-  transform: scale(1.08);
-}
-
-/* ====== BOTONES ====== */
-.boton {
-  display: inline-block;
-  padding: 10px 24px;
-  border-radius: 12px;
-  font-weight: 600;
+nav a {
   text-decoration: none;
-  color: #fff;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #000;
+  margin: 0 15px;
+  font-weight: bold;
 }
 
-.boton.red {
+nav a:hover {
+  color: #b22222;
+}
+
+/* ======= CONTENIDO ======= */
+main {
+  padding: 40px 20px;
+}
+
+h2 {
+  background-color: #7a0000;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+p {
+  margin-bottom: 40px;
+  color: #333;
+}
+
+footer {
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+/* ======= BOTONES Y CAMPOS ======= */
+.btn {
+  background-color: #b22222;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn:hover {
   background-color: #8b0000;
 }
 
-.boton.red:hover {
-  background-color: #a40000;
+input {
+  border: none;
+  border-radius: 15px;
+  background-color: #b22222;
+  padding: 10px;
+  width: 250px;
+  color: white;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
-.boton.blue {
-  background-color: #004aad;
+input::placeholder {
+  color: #fff;
 }
 
-.boton.blue:hover {
-  background-color: #00378a;
+/* ======= OPCIONES DENUNCIA ======= */
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  margin-bottom: 40px;
 }
 
-/* ====== TEXTO FINAL ====== */
-.confia {
-  font-weight: 700;
-  font-size: 1.3rem;
-  margin-top: 25px;
+.option {
+  text-align: center;
 }
 
-/* ====== RESPONSIVE ====== */
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px 20px;
-  }
-
-  .navbar__menu {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-  }
-
-  .denuncia {
-    padding: 40px 20px;
-  }
-
-  .denuncia__opciones {
-    gap: 40px;
-  }
+.circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  border: 10px solid #600;
 }
 
-/* Para iniciar sesion se añadio: */
-input[type="text"],
-input[type="password"] {
-  font-size: 1rem;
-}
-
-button:focus,
-input:focus {
-  outline: none;
+.circle img {
+  width: 70px;
 }
