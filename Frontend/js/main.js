@@ -22,3 +22,38 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+// Redirigir al hacer clic en "Cerrar sesión"
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.querySelector(".logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      // Aquí puedes limpiar datos de sesión si luego los usas
+      alert("Sesión cerrada correctamente.");
+      window.location.href = "index.html";
+    });
+  }
+});
+
+// PARA REGISTARA DENUNCIA: 
+document.addEventListener('DOMContentLoaded', () => {
+  const mapContainer = document.getElementById('mapContainer');
+  const btnMapa = document.getElementById('btnMapa');
+  const form = document.getElementById('formDenuncia');
+
+  btnMapa.addEventListener('click', () => {
+    mapContainer.textContent = 'Haga clic en el mapa para seleccionar ubicación';
+    mapContainer.style.cursor = 'pointer';
+
+    mapContainer.addEventListener('click', () => {
+      mapContainer.textContent = 'Ubicación seleccionada ✓';
+      mapContainer.style.backgroundColor = '#d4edda';
+      mapContainer.style.color = '#155724';
+      mapContainer.style.cursor = 'default';
+    }, { once: true });
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Denuncia enviada correctamente. Recibirá un número de seguimiento.');
+  });
+});
