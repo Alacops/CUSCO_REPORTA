@@ -1,0 +1,280 @@
+/* ====== RESET GENERAL ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #f8f9fa;
+  color: #222;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif; /* compatibilidad con nuevo */
+  text-align: center;
+}
+
+/* ====== NAVBAR ORIGINAL ====== */
+.navbar {
+  width: 100%;
+  background-color: #d9d9d9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 50px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar__logo {
+  height: 48px;
+  object-fit: contain;
+}
+
+.navbar__menu {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.navbar__menu a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #111;
+  transition: color 0.3s ease;
+}
+
+.navbar__menu a:hover {
+  color: #b71c1c;
+}
+
+/* ====== NUEVO HEADER (COMPATIBLE) ====== */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e5e5e5;
+  padding: 10px 40px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  height: 40px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #000;
+  margin: 0 15px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: #b22222;
+}
+
+/* ====== SECCIÓN PRINCIPAL (ORIGINAL) ====== */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+}
+
+.denuncia {
+  text-align: center;
+  max-width: 950px;
+  background: #fff;
+  padding: 60px 40px;
+  border-radius: 20px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+.denuncia h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.denuncia p {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 50px;
+  line-height: 1.6;
+}
+
+/* ====== OPCIONES ORIGINAL ====== */
+.denuncia__opciones {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 70px;
+  margin-bottom: 40px;
+}
+
+.opcion {
+  text-align: center;
+}
+
+.opcion h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* ====== OPCIONES NUEVO (circle/option) ====== */
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  margin-bottom: 40px;
+}
+
+.option {
+  text-align: center;
+}
+
+.circle,
+.icono {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  border: 10px solid #600;
+  background-color: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.circle img,
+.icono img {
+  width: 70px;
+}
+
+.icono.red {
+  border-color: #8b0000;
+}
+
+.icono.blue {
+  border-color: #004aad;
+}
+
+.icono:hover,
+.circle:hover {
+  transform: scale(1.08);
+}
+
+/* ====== BOTONES ====== */
+.boton,
+.btn {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background-color: #b22222;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: none;
+  cursor: pointer;
+}
+
+.boton.red,
+.btn.red {
+  background-color: #8b0000;
+}
+
+.boton.red:hover,
+.btn.red:hover {
+  background-color: #a40000;
+}
+
+.boton.blue {
+  background-color: #004aad;
+}
+
+.boton.blue:hover {
+  background-color: #00378a;
+}
+
+.btn:hover {
+  background-color: #8b0000;
+}
+
+/* ====== INPUTS ====== */
+input {
+  border: none;
+  border-radius: 15px;
+  background-color: #b22222;
+  padding: 10px;
+  width: 250px;
+  color: white;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+input::placeholder {
+  color: #fff;
+}
+
+input[type="text"],
+input[type="password"] {
+  font-size: 1rem;
+}
+
+button:focus,
+input:focus {
+  outline: none;
+}
+
+/* ====== TEXTO FINAL ====== */
+.confia {
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin-top: 25px;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 20px;
+  }
+
+  .navbar__menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .denuncia {
+    padding: 40px 20px;
+  }
+
+  .denuncia__opciones {
+    gap: 40px;
+  }
+
+  .options {
+    flex-wrap: wrap;
+    gap: 40px;
+  }
+}
