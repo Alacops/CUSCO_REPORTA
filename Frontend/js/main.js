@@ -57,3 +57,31 @@ document.addEventListener('DOMContentLoaded', () => {
     alert('Denuncia enviada correctamente. Recibirá un número de seguimiento.');
   });
 });
+
+
+// PARA PERFIL DE USUARIO: Editar / Guardar
+document.addEventListener("DOMContentLoaded", function() {
+  const btnEditar = document.getElementById("btnEditarPerfil");
+  const inputs = document.querySelectorAll(".campo-perfil");
+
+  if (btnEditar) { // Solo se ejecuta en la página del perfil
+    let modoEdicion = false;
+
+    btnEditar.addEventListener("click", function() {
+      modoEdicion = !modoEdicion;
+
+      inputs.forEach(input => {
+        input.disabled = !modoEdicion;
+      });
+
+      if (modoEdicion) {
+        btnEditar.textContent = "Guardar Cambios";
+        btnEditar.style.backgroundColor = "#004aad";
+      } else {
+        btnEditar.textContent = "Editar Perfil";
+        btnEditar.style.backgroundColor = "#b22222";
+        alert("Cambios guardados correctamente ✅");
+      }
+    });
+  }
+});
