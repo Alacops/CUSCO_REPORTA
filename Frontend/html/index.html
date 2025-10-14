@@ -1,61 +1,129 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cusco Reporta – Registrar Denuncia</title>
-  <link rel="stylesheet" href="../css/styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de Incidencias - Cusco Reporta</title>
 
-<body>
-  <!-- ======= HEADER ======= -->
-  <header class="navbar">
-    <div class="navbar__left">
-      <img src="../assents/images/MTC.png" alt="Logo MTC" class="navbar__logo">
-      <img src="../assents/images/CuscoReporta.png" alt="Logo Cusco Reporta" class="navbar__logo">
+    <!-- Leaflet -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- Estilos generales -->
+    <link rel="stylesheet" href="../css/mapa_incidencias.css" />
+  </head>
+
+  <body>
+    <!-- ======= BARRA SUPERIOR ======= -->
+    <div class="topbar">
+      <div class="topbar__logo">
+        <img
+          src="Frontend/assents/images/CuscoReporta.png"
+          alt="Logo Cusco Reporta"
+        />
+      </div>
+      <div class="topbar__menu">
+        <a href="#">Inicio</a>
+        <a href="#">Sobre nosotros</a>
+        <a href="#">Contáctenos</a>
+        <a href="#">Ayuda</a>
+      </div>
     </div>
 
-    <nav class="navbar__menu">
-      <a href="#">Inicio</a>
-      <a href="#">Registra tu denuncia</a>
-      <a href="#">Sobre nosotros</a>
-      <a href="iniciar-sesion.html">Iniciar Sesión</a>
-      <a href="#">Ayuda</a>
-    </nav>
-  </header>
-
-  <!-- ======= MAIN ======= -->
-  <main class="main">
-    <section class="denuncia">
-      <h1>REGISTRAR DENUNCIA</h1>
-      <p>
-        ¡Hola! Podrá registrar su queja o denuncia de dos maneras: de manera anónima o identificándose. <br>
-        Ingrese los datos que se le solicitan para registrar su queja o denuncia.
-      </p>
-
-      <div class="denuncia__opciones">
-        <div class="opcion">
-          <h2>SIN IDENTIFICARME</h2>
-          <div class="icono red">
-            <img src="../assents/anonimo.svg" alt="Anónimo">
+    <!-- ======= CONTENEDOR PRINCIPAL ======= -->
+    <div class="container">
+      <!-- ======= SIDEBAR ======= -->
+      <aside class="sidebar">
+        <div>
+          <div class="sidebar__user">
+            <div class="sidebar__avatar">👤</div>
+            <div class="sidebar__info">
+              <h3>Jose Pérez</h3>
+              <p>Ciudadano</p>
+            </div>
           </div>
-          <a href="#" class="boton red">Denuncia aquí</a>
+
+          <ul class="sidebar__menu">
+            <li><a href="#">Ver perfil</a></li>
+            <li><a href="#">Reportar</a></li>
+            <li><a href="#">Estado de reportes</a></li>
+            <li><a href="#" class="active">Mapa de incidencias</a></li>
+            <li><a href="#">Notificaciones</a></li>
+          </ul>
         </div>
 
-        <div class="opcion">
-          <h2>IDENTIFICÁNDOME</h2>
-          <div class="icono blue">
-            <img src="../assents/identificado.svg" alt="Identificado">
+        <button class="logout-btn">Cerrar sesión</button>
+      </aside>
+
+      <!-- ======= CONTENIDO PRINCIPAL ======= -->
+      <main class="main-content">
+        <header>
+          <h1>Mapa de Incidencias - Cusco</h1>
+          <p class="subtitle">Monitoreo de incidentes en tiempo real</p>
+        </header>
+
+        <div class="controls">
+          <div class="filter-container">
+            <label for="tipo">Filtrar por tipo:</label>
+            <select id="tipo">
+              <option value="todos">Todos los incidentes</option>
+              <option value="accidente">Accidentes</option>
+              <option value="bache">Baches</option>
+              <option value="incendio">Incendios</option>
+            </select>
           </div>
-          <a href="#" class="boton blue">Denuncia aquí</a>
+
+          <div class="stats">
+            <div class="stat-card">
+              <div class="stat-value" id="total-count">4</div>
+              <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card accidentes">
+              <div class="stat-value" id="accidente-count">1</div>
+              <div class="stat-label">Accidentes</div>
+            </div>
+            <div class="stat-card baches">
+              <div class="stat-value" id="bache-count">2</div>
+              <div class="stat-label">Baches</div>
+            </div>
+            <div class="stat-card incendios">
+              <div class="stat-value" id="incendio-count">1</div>
+              <div class="stat-label">Incendios</div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <p class="confia">¡CONFÍA EN NOSOTROS!</p>
-    </section>
-  </main>
+        <div id="map"></div>
 
-  <script src="../js/main.js"></script>
-</body>
+        <div class="legend">
+          <h3>Leyenda</h3>
+          <div class="legend-items">
+            <div class="legend-item">
+              <div class="legend-color accidente-color"></div>
+              <span>Accidente de tránsito</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color bache-color"></div>
+              <span>Bache en la vía</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color incendio-color"></div>
+              <span>Incendio reportado</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <p>Cusco Reporta &copy; 2025 - Sistema de monitoreo ciudadano</p>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Script del mapa -->
+    <script src="../js/mapa_incidencias.js"></script>
+  </body>
 </html>

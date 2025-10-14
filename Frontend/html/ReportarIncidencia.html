@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reporte de Incidencia - Cusco Reporta</title>
+    <link rel="stylesheet" href="../css/ReporteIncidencia.css" />
+  </head>
+  <body>
+    <!-- ======= BARRA SUPERIOR ======= -->
+    <div class="topbar">
+      <div class="topbar__logo">
+        <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta" />
+      </div>
+      <div class="topbar__menu">
+        <a href="#">Inicio</a>
+        <a href="#">Sobre nosotros</a>
+        <a href="#">Contáctenos</a>
+        <a href="#">Ayuda</a>
+      </div>
+    </div>
+
+    <!-- ======= CONTENEDOR PRINCIPAL ======= -->
+    <div class="container">
+      <!-- ======= SIDEBAR ======= -->
+      <aside class="sidebar">
+        <div class="sidebar__user">
+          <div class="sidebar__avatar">👤</div>
+          <div class="sidebar__info">
+            <h3>Jose Pérez</h3>
+            <p>Ciudadano</p>
+          </div>
+        </div>
+
+        <ul class="sidebar__menu">
+          <li><a href="#">Ver perfil</a></li>
+          <li><a href="#" class="active">Reportar</a></li>
+          <li><a href="#">Estado de reportes</a></li>
+          <li><a href="#">Mapa de incidencias</a></li>
+          <li><a href="#">Notificaciones</a></li>
+        </ul>
+
+        <button class="logout-btn">Cerrar sesión</button>
+      </aside>
+
+      <!-- ======= CONTENIDO PRINCIPAL ======= -->
+      <main class="main-content">
+        <h1>REPORTE DE INCIDENCIA</h1>
+
+        <div class="reporte-form">
+          <div class="form-section">
+            <label for="tipo">Tipo de incidencia:</label>
+            <select id="tipo">
+              <option value="">Seleccione incidencia</option>
+              <option value="accidente">Accidente</option>
+              <option value="bache">Bache</option>
+              <option value="incendio">Incendio</option>
+              <option value="robo">Robo</option>
+            </select>
+
+            <label for="descripcion">Añadir descripción:</label>
+            <textarea id="descripcion" placeholder="Descripción"></textarea>
+
+            <div class="file-upload">
+              <label for="foto">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/685/685655.png"
+                  alt="icono cámara"
+                />
+                Adjuntar fotos
+              </label>
+              <input type="file" id="foto" accept="image/*" multiple />
+            </div>
+
+            <button id="enviar">Enviar reporte</button>
+          </div>
+
+          <div class="form-map">
+            <p>Ubicación:</p>
+            <img
+              src="https://cdn.pixabay.com/photo/2017/01/31/13/14/map-2024428_1280.png"
+              alt="Mapa ubicación"
+            />
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="../js/ReporteIncidencia.js"></script>
+  </body>
+</html>
