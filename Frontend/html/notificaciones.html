@@ -1,131 +1,179 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notificaciones - Reporta Cusco</title>
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/notificaciones.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notificaciones - Cusco Reporta</title>
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-    <!-- Barra Horizontal SUPERIOR (BLANCA) -->
-    <header class="top-header">
-        <div class="header-container">
-            <div class="header-logo">
-                <img src="../assents/images/CuscoReporta.png" alt="CUSCO REPORTA" class="logo-image">
-            </div>
-            <nav class="top-nav">
-                <ul>
-                    <li><a href="../index.html">Inicio</a></li>
-                    <li><a href="#">Sobre nosotros</a></li>
-                    <li><a href="#">Contáctenos</a></li>
-                    <li><a href="#">Ayuda</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <div class="main-container">
-        <!-- Barra Lateral IZQUIERDA (ROJA) -->
-        <aside class="sidebar">
-            <div class="user-profile">
-                <div class="user-avatar">
-                    <img src="../assents/images/MTC.png" alt="Jose Pérez">
-                </div>
-                <h3>Jose Pérez Ciudadano</h3>
-            </div>
-            
-            <nav class="side-nav">
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Ver perfil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="registrar_Denuncia.html" class="nav-link">Reportar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Denunciar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Estado de reportes</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Mapa de incidencias</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="notificaciones.html" class="nav-link active">Notificaciones</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="logout-section">
-                <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
-            </div>
-        </aside>
-        
-        <!-- Contenido Principal -->
-        <main class="main-content">
-            <div class="content-header">
-                <h2>NOTIFICACIONES</h2>
-            </div>
-            
-            <div class="notifications-container">
-                <div class="notification-item">
-                    <div class="notification-header">
-                        <span class="notification-title">Reporte Actualizado</span>
-                        <span class="notification-date">Hoy 10:30</span>
-                    </div>
-                    <div class="notification-message">
-                        Tu reporte #00123 sobre alumbrado público ha cambiado de estado a "En Proceso"
-                    </div>
-                    <div class="notification-actions">
-                        <button class="btn-mark-read">Marcar como leída</button>
-                    </div>
-                </div>
-
-                <div class="notification-item">
-                    <div class="notification-header">
-                        <span class="notification-title">Nuevo Mensaje</span>
-                        <span class="notification-date">Ayer 16:45</span>
-                    </div>
-                    <div class="notification-message">
-                        Tienes un nuevo mensaje del administrador sobre tu reporte de baches
-                    </div>
-                    <div class="notification-actions">
-                        <button class="btn-mark-read">Marcar como leída</button>
-                    </div>
-                </div>
-
-                <div class="notification-item read">
-                    <div class="notification-header">
-                        <span class="notification-title">Reporte Resuelto</span>
-                        <span class="notification-date">15/01/2024</span>
-                    </div>
-                    <div class="notification-message">
-                        Tu reporte #00120 sobre recolección de basura ha sido completado
-                    </div>
-                    <div class="notification-actions">
-                        <span class="read-status">Leída</span>
-                    </div>
-                </div>
-
-                <div class="notification-item read">
-                    <div class="notification-header">
-                        <span class="notification-title">Mantenimiento del Sistema</span>
-                        <span class="notification-date">14/01/2024</span>
-                    </div>
-                    <div class="notification-message">
-                        El sistema estará en mantenimiento el próximo sábado de 2:00 AM a 6:00 AM
-                    </div>
-                    <div class="notification-actions">
-                        <span class="read-status">Leída</span>
-                    </div>
-                </div>
-            </div>
-        </main>
+  <!-- ====== NAVBAR SUPERIOR ====== -->
+  <header class="topbar">
+    <div class="topbar__logo">
+      <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta Logo">
     </div>
+    <nav class="topbar__menu">
+      <a href="../index.html">Inicio</a>
+      <a href="#">Sobre nosotros</a>
+      <a href="#">Contáctenos</a>
+      <a href="#">Ayuda</a>
+    </nav>
+  </header>
 
-    
-    <script src="../js/main.js"></script>
+  <!-- ====== CONTENEDOR PRINCIPAL ====== -->
+  <div class="container">
+    <!-- ====== SIDEBAR IZQUIERDO ====== -->
+    <aside class="sidebar" style="display: flex; flex-direction: column; justify-content: flex-start;">
+      <div class="sidebar__user" style="margin-bottom: 10px;">
+        <div class="sidebar__avatar">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="sidebar__info">
+          <h3>Jose Pérez</h3>
+          <p>Ciudadano</p>
+        </div>
+      </div>
+
+      <!-- Menú del usuario -->
+      <ul class="sidebar__menu" style="margin-top: 0; padding-top: 0; list-style: none;">
+        <li style="display: flex; align-items: flex-start;">
+          <a href="perfil_usuario.html"><i class="fa-solid fa-id-card" style="width: 20px;"></i><span style="margin-left:8px;">Ver perfil</span></a>
+        </li>
+        <li style="display: flex; align-items: flex-start;">
+          <a href="registrar_Denuncia.html"><i class="fa-solid fa-pen-to-square" style="width: 20px;"></i><span style="margin-left:8px;">Reportar</span></a>
+        </li>
+        <li style="display: flex; align-items: flex-start;">
+          <a href="#"><i class="fa-solid fa-triangle-exclamation" style="width: 20px;"></i><span style="margin-left:8px;">Denunciar</span></a>
+        </li>
+        <li style="display: flex; align-items: flex-start;">
+          <a href="#"><i class="fa-solid fa-list-check" style="width: 20px;"></i><span style="margin-left:8px;">Estado de reportes</span></a>
+        </li>
+        <li style="display: flex; align-items: flex-start;">
+          <a href="#"><i class="fa-solid fa-map-location-dot" style="width: 20px;"></i><span style="margin-left:8px;">Mapa de incidencias</span></a>
+        </li>
+        <li style="display: flex; align-items: flex-start;">
+          <a href="notificaciones.html" style="background-color: rgba(148, 42, 42, 0.1); border-left: 3px solid #942A2A; padding-left: 17px;"><i class="fa-solid fa-bell" style="width: 20px;"></i><span style="margin-left:8px;">Notificaciones</span></a>
+        </li>
+      </ul>
+
+      <button class="logout-btn" id="logoutBtn" style="margin-top: auto;">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </button>
+    </aside>
+
+    <!-- ====== CONTENIDO PRINCIPAL ====== -->
+    <main class="main-content">
+      <div>
+        <h1>Notificaciones</h1>
+        <p style="color:#555; margin-top:10px;">
+          Gestiona tus alertas y actualizaciones de reportes.
+        </p>
+      </div>
+
+      <!-- Contenedor de Notificaciones -->
+      <div class="notifications-container" style="margin-top: 30px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 0;">
+        
+        <!-- Notificación 1 -->
+        <div class="notification-item" style="padding: 20px; border-bottom: 1px solid #e0e0e0;">
+          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: #942A2A; margin: 0; font-size: 1.1rem;">
+              <i class="fa-solid fa-file-circle-check" style="margin-right: 8px;"></i>
+              Reporte Actualizado
+            </h3>
+            <span style="color: #666; font-size: 0.9rem;">Hoy 10:30</span>
+          </div>
+          <p style="color: #666; margin-bottom: 15px; line-height: 1.5;">
+            Tu reporte #00123 sobre alumbrado público ha cambiado de estado a "En Proceso"
+          </p>
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="btn-mark-read" style="background: #942A2A; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+              Marcar como leída
+            </button>
+          </div>
+        </div>
+
+        <!-- Notificación 2 -->
+        <div class="notification-item" style="padding: 20px; border-bottom: 1px solid #e0e0e0;">
+          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: #942A2A; margin: 0; font-size: 1.1rem;">
+              <i class="fa-solid fa-message" style="margin-right: 8px;"></i>
+              Nuevo Mensaje
+            </h3>
+            <span style="color: #666; font-size: 0.9rem;">Ayer 16:45</span>
+          </div>
+          <p style="color: #666; margin-bottom: 15px; line-height: 1.5;">
+            Tienes un nuevo mensaje del administrador sobre tu reporte de baches
+          </p>
+          <div style="display: flex; justify-content: flex-end;">
+            <button class="btn-mark-read" style="background: #942A2A; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9rem;">
+              Marcar como leída
+            </button>
+          </div>
+        </div>
+
+        <!-- Notificación 3 -->
+        <div class="notification-item" style="padding: 20px; border-bottom: 1px solid #e0e0e0; background-color: #f8f9fa;">
+          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: #28a745; margin: 0; font-size: 1.1rem;">
+              <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i>
+              Reporte Resuelto
+            </h3>
+            <span style="color: #666; font-size: 0.9rem;">15/01/2024</span>
+          </div>
+          <p style="color: #666; margin-bottom: 15px; line-height: 1.5;">
+            Tu reporte #00120 sobre recolección de basura ha sido completado exitosamente
+          </p>
+          <div style="display: flex; justify-content: flex-end;">
+            <span style="color: #28a745; font-weight: 500;">✓ Leída</span>
+          </div>
+        </div>
+
+        <!-- Notificación 4 -->
+        <div class="notification-item" style="padding: 20px; background-color: #f8f9fa;">
+          <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+            <h3 style="color: #666; margin: 0; font-size: 1.1rem;">
+              <i class="fa-solid fa-screwdriver-wrench" style="margin-right: 8px;"></i>
+              Mantenimiento del Sistema
+            </h3>
+            <span style="color: #666; font-size: 0.9rem;">14/01/2024</span>
+          </div>
+          <p style="color: #666; margin-bottom: 15px; line-height: 1.5;">
+            El sistema estará en mantenimiento el próximo sábado de 2:00 AM a 6:00 AM
+          </p>
+          <div style="display: flex; justify-content: flex-end;">
+            <span style="color: #28a745; font-weight: 500;">✓ Leída</span>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ====== SCRIPT ====== -->
+  <script>
+    document.getElementById("logoutBtn").addEventListener("click", function() {
+      if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        alert("Sesión cerrada correctamente.");
+        window.location.href = "../index.html";
+      }
+    });
+
+    // Funcionalidad para marcar notificaciones como leídas
+    document.querySelectorAll('.btn-mark-read').forEach(button => {
+      button.addEventListener('click', function() {
+        const notificationItem = this.closest('.notification-item');
+        
+        // Cambiar a estado leído
+        notificationItem.style.backgroundColor = '#f8f9fa';
+        
+        // Cambiar el botón por texto "Leída"
+        const actions = notificationItem.querySelector('.notification-actions') || this.parentElement;
+        actions.innerHTML = '<span style="color: #28a745; font-weight: 500;">✓ Leída</span>';
+        
+        alert('Notificación marcada como leída');
+      });
+    });
+  </script>
 </body>
 </html>
