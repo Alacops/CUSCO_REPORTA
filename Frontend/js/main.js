@@ -56,6 +56,56 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     alert('Denuncia enviada correctamente. Recibirá un número de seguimiento.');
   });
+
+  // ==================== FUNCIONALIDAD PARA NOTIFICACIONES ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar event listeners a los botones de marcar como leído
+    document.querySelectorAll('.btn-mark-read').forEach(button => {
+        button.addEventListener('click', function() {
+            const notificationItem = this.closest('.notification-item');
+            markAsRead(notificationItem);
+        });
+    });
+});
+
+function markAsRead(notificationItem) {
+    // Cambiar a estado leído
+    notificationItem.classList.add('read');
+    
+    // Cambiar el botón por texto "Leída"
+    const actions = notificationItem.querySelector('.notification-actions');
+    actions.innerHTML = '<span class="read-status">Leída</span>';
+    
+    // Actualizar contador
+    updateNotificationCount();
+}
+
+function updateNotificationCount() {
+    const unreadCount = document.querySelectorAll('.notification-item:not(.read)').length;
+    console.log('Notificaciones no leídas:', unreadCount);
+}
+
+// Función para marcar todas como leídas
+function markAllAsRead() {
+    document.querySelectorAll('.notification-item:not(.read)').forEach(item => {
+        markAsRead(item);
+    });
+}
+
+// Función para filtrar solo no leídas
+function filterUnreadOnly() {
+    document.querySelectorAll('.notification-item.read').forEach(item => {
+        item.style.display = 'none';
+    });
+}
+
+// Función para mostrar todas
+function showAll() {
+    document.querySelectorAll('.notification-item').forEach(item => {
+        item.style.display = 'block';
+    });
+}
 });
 
 
