@@ -135,3 +135,65 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 });
+// ==================== GESTIÓN DE USUARIOS ====================
+document.addEventListener("DOMContentLoaded", function() {
+  const tabla = document.querySelector("#tablaUsuarios tbody");
+  if (!tabla) return; // Solo se ejecuta en gestion_usuarios.html
+
+  const usuarios = [
+    { id: 1, nombre: "Jose Pérez", correo: "joseperez@mail.com", rol: "Ciudadano" },
+    { id: 2, nombre: "Ana Torres", correo: "ana.torres@mail.com", rol: "Administrador" },
+    { id: 3, nombre: "Luis Gómez", correo: "luis.gomez@mail.com", rol: "Ciudadano" },
+    { id: 4, nombre: "María Vargas", correo: "maria.vargas@mail.com", rol: "Moderador" }
+  ];
+
+  function renderUsuarios() {
+    tabla.innerHTML = "";
+    usuarios.forEach(user => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td style="padding:10px; border-bottom:1px solid #eee;">${user.id}</td>
+        <td style="padding:10px; border-bottom:1px solid #eee;">${user.nombre}</td>
+        <td style="padding:10px; border-bottom:1px solid #eee;">${user.correo}</td>
+        <td style="padding:10px; border-bottom:1px solid #eee;">${user.rol}</td>
+        <td style="padding:10px; border-bottom:1px solid #eee;">
+          <button class="btn btn-editar" data-id="${user.id}" style="margin-right:8px; background-color:#004aad;">Editar</button>
+          <button class="btn btn-eliminar" data-id="${user.id}" style="background-color:#8b0000;">Eliminar</button>
+        </td>
+      `;
+      tabla.appendChild(fila);
+    });
+    asignarEventos();
+  }
+
+  function asignarEventos() {
+    document.querySelectorAll(".btn-editar").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const id = e.target.dataset.id;
+        const user = usuarios.find(u => u.id == id);
+        const nuevoNombre = prompt("Editar nombre:", user.nombre);
+        const nuevoRol = prompt("Editar rol:", user.rol);
+        if (nuevoNombre && nuevoRol) {
+          user.nombre = nuevoNombre;
+          user.rol = nuevoRol;
+          alert("Usuario actualizado correctamente.");
+          renderUsuarios();
+        }
+      });
+    });
+
+    document.querySelectorAll(".btn-eliminar").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const id = e.target.dataset.id;
+        if (confirm("¿Seguro que deseas eliminar este usuario?")) {
+          const index = usuarios.findIndex(u => u.id == id);
+          usuarios.splice(index, 1);
+          alert("🗑️ Usuario eliminado.");
+          renderUsuarios();
+        }
+      });
+    });
+  }
+
+  renderUsuarios();
+});
