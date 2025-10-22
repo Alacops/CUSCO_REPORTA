@@ -47,6 +47,7 @@
       <main class="main-content">
         <h1>REPORTE DE INCIDENCIA</h1>
 
+        <!-- ======= FORMULARIO DE REPORTE ======= -->
         <div class="reporte-form">
           <div class="form-section">
             <label for="tipo">Tipo de incidencia:</label>
@@ -74,18 +75,63 @@
 
             <button id="enviar">Enviar reporte</button>
           </div>
-
-          <div class="form-map">
-            <p>Ubicación:</p>
-            <img
-              src="https://cdn.pixabay.com/photo/2017/01/31/13/14/map-2024428_1280.png"
-              alt="Mapa ubicación"
-            />
-          </div>
         </div>
+
+        <!-- ======= DETALLE DE INCIDENCIA ======= -->
+        <section class="detalle-incidencia">
+          <h2>Detalle de Incidencia</h2>
+
+          <div class="detalle-card">
+            <p><strong>Tipo:</strong> Bache</p>
+            <p><strong>Ubicación:</strong> Av. La Cultura, Cusco</p>
+            <p><strong>Fecha de reporte:</strong> 22/10/2025</p>
+            <p>
+              <strong>Descripción:</strong> Hay un bache grande frente a la
+              universidad que dificulta el tránsito vehicular.
+            </p>
+
+            <div class="imagenes">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Pothole_example.jpg"
+                alt="Foto de bache"
+              />
+            </div>
+
+            <div class="estado">
+              <h3>
+                Estado actual:
+                <span id="estado-texto" style="color: #b22222">Pendiente</span>
+              </h3>
+
+              <div class="estado-botones">
+                <button class="btn" onclick="cambiarEstado('Pendiente')">
+                  Pendiente
+                </button>
+                <button class="btn" onclick="cambiarEstado('En proceso')">
+                  En proceso
+                </button>
+                <button class="btn" onclick="cambiarEstado('Resuelto')">
+                  Resuelto
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
-    <script src="../js/ReporteIncidencia.js"></script>
+    <script>
+      // Simulación de cambio de estado
+      function cambiarEstado(nuevoEstado) {
+        const estadoTexto = document.getElementById("estado-texto");
+        estadoTexto.textContent = nuevoEstado;
+
+        // Cambia color del texto según estado
+        if (nuevoEstado === "Pendiente") estadoTexto.style.color = "#b22222";
+        else if (nuevoEstado === "En proceso")
+          estadoTexto.style.color = "#e69500";
+        else estadoTexto.style.color = "#008000";
+      }
+    </script>
   </body>
 </html>

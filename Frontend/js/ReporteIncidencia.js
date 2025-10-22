@@ -8,7 +8,7 @@ document.getElementById("enviar").addEventListener("click", function () {
   }
 
   alert(
-    `✅ Reporte enviado correctamente.\nTipo: ${tipo}\nDescripción: ${descripcion}`
+    `Reporte enviado correctamente.\nTipo: ${tipo}\nDescripción: ${descripcion}`
   );
   document.getElementById("tipo").value = "";
   document.getElementById("descripcion").value = "";
