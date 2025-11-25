@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Cusco Reporta – Mapa de Incidencias (Admin)</title>
 
-  <!-- -->
+  <!-- CSS -->
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <!-- Leaflet -->
   <link
@@ -23,120 +24,190 @@
 
   <style>
     :root{
-      --burgundy:#7a0000; --burgundy-2:#8b1e1e;
-      --ink:#0f172a; --bord:#e5e7eb; --shadow:0 14px 28px rgba(0,0,0,.12);
-      --rojo:#dc2626; --amarillo:#f59e0b; --verde:#16a34a; --gris:#f8fafc;
-      --radius:14px;
+      --rojo:#dc2626; 
+      --amarillo:#f59e0b; 
+      --verde:#16a34a;
+      --bord:#e5e7eb; 
+      --gris:#f8fafc; 
+      --ink:#0f172a;
+      --radius:12px; 
+      --shadow:0 10px 24px rgba(0,0,0,.08);
+      --burgundy:#7a0000; 
+      --burgundy-2:#8b1e1e;
     }
-    /* Fondo granate y barra superior */
-    body{margin:0;background:linear-gradient(180deg,#7a0000 0%, #5e0c0c 34%, #3a0b0b 100%); font:16px/1.5 system-ui,Segoe UI,Roboto,Arial; color:#111}
-    .topbar{background:#e6e7e9;border-bottom:1px solid #d7d9de;padding:8px 18px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
-    .logos{display:flex;gap:12px;align-items:center}
-    .logos img{height:34px}
-    .nav{display:flex;gap:26px;justify-content:flex-end}
-    .nav a{color:#111;text-decoration:none;font-weight:700}
-    .nav a:hover{color:var(--burgundy)}
 
-    main{padding:22px}
-    .wrap{display:grid;gap:16px;grid-template-columns: 1fr}
-    .card{background:#fff;border:1px solid var(--bord);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
-    h1{color:#fff;margin:6px 0 12px;font-weight:900}
+    body{
+      margin:0;
+      font:16px/1.5 system-ui,Segoe UI,Roboto,Arial;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+      background:#f8fafc;
+      color:#111;
+    }
 
-    .grid{display:grid;gap:16px;grid-template-columns: 1fr 360px}
-    @media (max-width:1024px){ .grid{grid-template-columns:1fr} }
+    /* ====== Topbar ====== */
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 20px;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(0,0,0,.1);
+      z-index:1000;
+    }
+    .topbar__logo img{height:40px;}
+    .topbar__menu a{
+      margin-left:20px;
+      text-decoration:none;
+      color:#111;
+      font-weight:600;
+    }
 
-    /* Panel lateral (filtros + resumen) */
-    .filters label{font-weight:800;font-size:.92rem}
-    .filters select{width:100%;padding:10px 12px;border:1.5px solid #d7dbe0;border-radius:10px}
-    .btn{background:var(--burgundy);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}
-    .btn:hover{background:var(--burgundy-2)}
-    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
-    .stat{border:1px solid var(--bord);border-radius:12px;padding:10px;text-align:center}
-    .stat h3{margin:0;font-size:.9rem;color:#475569}
-    .n{margin-top:6px;font-size:20px;font-weight:900}
+    /* Contenedor principal con sidebar + main */
+    .container{
+      display:flex;
+      flex:1;
+      min-height:0;
+    }
 
-    /* Mapa y leyenda */
-    #map{height:72vh; min-height:460px; border-radius:12px; border:1px solid var(--bord)}
+    /* Sidebar estilo panel admin */
+    .sidebar{
+      width:250px;
+      background: var(--burgundy);
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      color:white;
+    }
+    .sidebar__user{display:flex; gap:12px; align-items:center; margin-bottom:20px;}
+    .sidebar__avatar i{font-size:40px; color:white;}
+    .sidebar__info h3{margin:0; font-size:1.2rem;}
+    .sidebar__info p{margin:0; font-size:.9rem; color:#f0f0f0;}
+    .sidebar__menu{list-style:none; padding:0; margin-top:20px; display:flex; flex-direction:column; gap:12px;}
+    .sidebar__menu a{text-decoration:none; color:white; font-weight:600; display:flex; align-items:center;}
+    .sidebar__menu a i{width:20px;}
+    .sidebar__menu a.active{color:var(--amarillo);}
+    .sidebar__menu a:hover{color:var(--amarillo);}
+    .logout-btn{margin-top:auto; padding:10px; background:var(--rojo); color:white; border:none; border-radius:10px; cursor:pointer;}
+
+    /* Main content a la derecha */
+    main.main-content{
+      flex:1; 
+      padding:20px; 
+      overflow:auto; 
+      background:white;
+      color:#111;
+    }
+    main h1{color:var(--burgundy); font-weight:900; font-size:2.2rem;}
+
+    /* Layout mapa + panel lateral */
+    .layout{display:grid;gap:16px;grid-template-columns:2fr 1fr;}
+    .card{background:#fff;border:1px solid var(--bord);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;}
+    .filters{display:flex;flex-direction:column;gap:10px;align-items:start;}
+    .filters label{font-weight:700;font-size:.92rem;}
+    select,.btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;}
+    .btn{background:var(--burgundy);color:#fff;font-weight:800;}
+    .btn:hover{background:var(--burgundy-2);}
+    #map{height:60vh; border-radius:10px; border:1px solid var(--bord);} /* achicado un poco */
     .legend{background:#fff;border:1px solid var(--bord);border-radius:10px;padding:8px 10px;line-height:18px;box-shadow:var(--shadow)}
     .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
     .dot.red{background:var(--rojo)} .dot.yellow{background:var(--amarillo)} .dot.green{background:var(--verde)}
-
-    /* Chips de estado */
     .chip{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:800;font-size:.85rem;color:#fff}
     .chip.red{background:var(--rojo)} .chip.yellow{background:var(--amarillo);color:#111} .chip.green{background:var(--verde)}
   </style>
 </head>
 <body>
-  <!-- TOPBAR -->
+  <!-- ====== TOPBAR ====== -->
   <header class="topbar">
-    <div class="logos">
-      <img src="../assents/images/MTC.png" alt="MTC">
-      <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta">
+    <div class="topbar__logo">
+      <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta Logo">
     </div>
-    <nav class="nav">
+    <nav class="topbar__menu">
       <a href="index.html">Inicio</a>
-      <a href="panel.html">Registra tu denuncia</a>
-      <a href="Estado_Reporte.html">Estado de reportes</a>
-      <a href="iniciar-sesion.html">Iniciar Sesión</a>
-      <a href="#">Ayuda</a>
+      <a href="sobre_nosotros.html">Sobre nosotros</a>
+      <a href="ayuda.html">Ayuda</a>
     </nav>
   </header>
 
-  <main>
-    <h1>Mapa de Incidencias (Admin)</h1>
-
-    <div class="grid">
-      <!-- MAPA -->
-      <section class="card">
-        <div id="map"></div>
-      </section>
-
-      <!-- PANEL LATERAL -->
-      <aside class="card">
-        <h3 style="margin-top:4px">Filtros</h3>
-        <div class="filters">
-          <label for="fEstado">Estado</label>
-          <select id="fEstado">
-            <option value="TODOS">Todos</option>
-            <option value="Recibido">Recibido (rojo)</option>
-            <option value="En proceso">En proceso (amarillo)</option>
-            <option value="Solucionado">Solucionado (verde)</option>
-          </select>
-          <button id="btnAplicar" class="btn" style="margin-top:10px">Aplicar filtro</button>
+  <!-- ====== CONTENEDOR PRINCIPAL ====== -->
+  <div class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar__user">
+        <div class="sidebar__avatar"><i class="fa-solid fa-user-shield"></i></div>
+        <div class="sidebar__info">
+          <h3>Administrador</h3>
+          <p>Administrador</p>
         </div>
+      </div>
 
-        <div style="margin-top:16px">
-          <div class="legend">
-            <div><span class="dot red"></span>Recibido</div>
-            <div><span class="dot yellow"></span>En proceso</div>
-            <div><span class="dot green"></span>Solucionado</div>
+      <ul class="sidebar__menu">
+        <li><a href="perfil_admin.html"><i class="fa-solid fa-id-card"></i> Ver perfil</a></li>
+        <li><a href="Estado_Reporte.html"><i class="fa-solid fa-list-check"></i> Incidencias/Denuncias</a></li>
+        <li><a href="Mapa_Incidencias_Admin.html" class="active"><i class="fa-solid fa-map-location-dot"></i> Mapa de incidencias</a></li>
+        <li><a href="reporte_etadistico.html"><i class="fa-solid fa-chart-column"></i> Reporte estadístico</a></li>
+        <li><a href="gestion_usuarios.html"><i class="fa-solid fa-users-gear"></i> Gestión de usuarios</a></li>
+        <li><a href="#"><i class="fa-solid fa-tags"></i> Gestión de categorías</a></li>
+      </ul>
+
+      <button class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión</button>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <h1>Mapa de Incidencias (Admin)</h1>
+
+      <div class="layout">
+        <!-- MAPA -->
+        <section class="card">
+          <div id="map"></div>
+        </section>
+
+        <!-- PANEL LATERAL -->
+        <aside class="card">
+          <h3 style="margin-top:4px">Filtros</h3>
+          <div class="filters">
+            <label for="fEstado">Estado</label>
+            <select id="fEstado">
+              <option value="TODOS">Todos</option>
+              <option value="Recibido">Recibido</option>
+              <option value="En proceso">En proceso</option>
+              <option value="Solucionado">Solucionado</option>
+            </select>
+            <button id="btnAplicar" class="btn">Aplicar filtro</button>
           </div>
-        </div>
 
-        <div class="summary">
-          <div class="stat"><h3>Recibidos</h3><div class="n" id="c-reci">0</div></div>
-          <div class="stat"><h3>En proceso</h3><div class="n" id="c-proc">0</div></div>
-          <div class="stat"><h3>Solucionados</h3><div class="n" id="c-solu">0</div></div>
-        </div>
-
-        <div style="margin-top:16px">
-          <h3 style="margin:8px 0">Seleccionado</h3>
-          <div id="detalle">
-            <div><b>ID:</b> <span id="d-id">—</span></div>
-            <div><b>Fecha:</b> <span id="d-fecha">—</span></div>
-            <div><b>Estado:</b> <span id="d-estado">—</span></div>
-            <div><b>Tipo:</b> <span id="d-tipo">—</span></div>
-            <div><b>Dirección:</b> <span id="d-dir">—</span></div>
-            <div style="margin-top:8px;color:#64748b;font-size:.9rem">* Datos simulados para prototipo.</div>
+          <div style="margin-top:16px">
+            <div class="legend">
+              <div><span class="dot red"></span>Recibido</div>
+              <div><span class="dot yellow"></span>En proceso</div>
+              <div><span class="dot green"></span>Solucionado</div>
+            </div>
           </div>
-        </div>
-      </aside>
-    </div>
-  </main>
+
+          <div style="margin-top:16px">
+            <h3 style="margin:8px 0">Seleccionado</h3>
+            <div id="detalle">
+              <div><b>ID:</b> <span id="d-id">—</span></div>
+              <div><b>Fecha:</b> <span id="d-fecha">—</span></div>
+              <div><b>Estado:</b> <span id="d-estado">—</span></div>
+              <div><b>Tipo:</b> <span id="d-tipo">—</span></div>
+              <div><b>Dirección:</b> <span id="d-dir">—</span></div>
+              <div style="margin-top:8px;color:#64748b;font-size:.9rem">* Datos simulados para prototipo.</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
 
   <script>
+    document.getElementById("logoutBtn").addEventListener("click", function() {
+      window.location.href = "index.html";
+    });
+
     // ===================== Datos simulados =====================
-    // Coordenadas aproximadas de Cusco
     const INCIDENTES = [
       { id:1052, fecha:'2024-04-20', estado:'Recibido',     tipo:'Accidente',           dir:'Av. El Sol 500',     lat:-13.5185, lng:-71.9769 },
       { id:1048, fecha:'2024-04-18', estado:'En proceso',   tipo:'Semáforo dañado',     dir:'Calle Pumacurco 210', lat:-13.5176, lng:-71.9740 },
@@ -148,8 +219,7 @@
       { id:1001, fecha:'2024-04-05', estado:'Solucionado',  tipo:'Hueco en vía',        dir:'Urb. Ttio D-12',      lat:-13.5270, lng:-71.9487 }
     ];
 
-    // ===================== UI helpers =====================
-    const $ = (s, r=document)=>r.querySelector(s);
+    const $ = (s,r=document)=>r.querySelector(s);
     const colorByEstado = (e)=> e==='Recibido' ? '#dc2626' : e==='En proceso' ? '#f59e0b' : '#16a34a';
     const chip = (e)=> {
       const cls = e==='Recibido' ? 'red' : e==='En proceso' ? 'yellow' : 'green';
@@ -206,26 +276,22 @@
         bounds.push([r.lat, r.lng]);
       });
 
-      // Enfocar a los resultados
       if(bounds.length===1){ map.setView(bounds[0], 16); }
       else{ map.fitBounds(bounds, { padding:[24,24] }); }
     }
 
     function applyFilter(){
-      const estado = $('#fEstado').value; // TODOS | Recibido | En proceso | Solucionado
+      const estado = $('#fEstado').value;
       const filtered = estado==='TODOS' ? INCIDENTES : INCIDENTES.filter(x=>x.estado===estado);
       renderMarkers(filtered);
       updateCounters(filtered);
       setDetalle(filtered[0] || null);
     }
 
-    // ===================== Init =====================
     window.addEventListener('DOMContentLoaded', ()=>{
       initMap();
-      // eventos
       $('#btnAplicar').addEventListener('click', applyFilter);
       $('#fEstado').addEventListener('change', applyFilter);
-      // render inicial
       applyFilter();
     });
   </script>

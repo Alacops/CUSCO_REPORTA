@@ -53,7 +53,7 @@
       min-height: calc(100vh - 70px);
     }
 
-    /* ====== SIDEBAR IZQUIERDO (MISMO ANCHO QUE ADMIN.HTML) ====== */
+    /* ====== SIDEBAR IZQUIERDO (ANCHO COMO ADMIN.HTML) ====== */
     .sidebar {
       width: 280px;
       background-color: #fff;
@@ -325,52 +325,51 @@
   </style>
 </head>
 <body>
-  <!-- ====== NAVBAR SUPERIOR ====== -->
+  <!-- ====== NAVBAR SUPERIOR (ADMIN) ====== -->
   <header class="topbar">
     <div class="topbar__logo">
       <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta Logo">
     </div>
     <nav class="topbar__menu">
-      <a href="../index.html">Inicio</a>
-      <a href="#">Sobre nosotros</a>
-      <a href="#">Contáctenos</a>
-      <a href="#">Ayuda</a>
+      <a href="index.html">Inicio</a>
+      <a href="sobre_nosotros.html">Sobre nosotros</a>
+      <a href="ayuda.html">Ayuda</a>
     </nav>
   </header>
 
   <!-- ====== CONTENEDOR PRINCIPAL ====== -->
   <div class="container">
-    <!-- ====== SIDEBAR IZQUIERDO (ANCHO COMO ADMIN.HTML) ====== -->
+    <!-- ====== SIDEBAR IZQUIERDO (ADMIN) ====== -->
     <aside class="sidebar">
       <div class="sidebar__user">
         <div class="sidebar__avatar">
-          <i class="fa-solid fa-user"></i>
+          <i class="fa-solid fa-user-shield"></i>
         </div>
         <div class="sidebar__info">
-          <h3>José Pérez</h3>
-          <p>Ciudadano</p>
+          <h3>Administrador</h3>
+          <p>Administrador</p>
         </div>
       </div>
 
-      <!-- Menú del usuario -->
+      <!-- Menú del administrador -->
       <ul class="sidebar__menu">
         <li>
-          <a href="perfil_usuario.html"><i class="fa-solid fa-id-card"></i><span>Ver perfil</span></a>
+          <a href="perfil_admin.html"><i class="fa-solid fa-id-card"></i><span>Ver perfil</span></a>
         </li>
         <li>
-          <a href="registrar_Denuncia.html"><i class="fa-solid fa-pen-to-square"></i><span>Reportar</span></a>
+          <a href="Estado_Reporte.html"><i class="fa-solid fa-list-check"></i><span>Incidencias/Denuncias</span></a>
         </li>
         <li>
-          <a href="#"><i class="fa-solid fa-triangle-exclamation"></i><span>Denunciar</span></a>
+          <a href="Mapa_Incidencias_Admin.html"><i class="fa-solid fa-map-location-dot"></i><span>Mapa de incidencias</span></a>
         </li>
         <li>
-          <a href="estado_reportes.html"><i class="fa-solid fa-list-check"></i><span>Estado de reportes</span></a>
+          <a href="reporte_etadistico.html"><i class="fa-solid fa-chart-column"></i><span>Reporte estadístico</span></a>
         </li>
         <li>
-          <a href="mapa_incidencias.html"><i class="fa-solid fa-map-location-dot"></i><span>Mapa de incidencias</span></a>
+          <a href="gestion_usuarios.html"><i class="fa-solid fa-users-gear"></i><span>Gestión de usuarios</span></a>
         </li>
         <li>
-          <a href="notificaciones.html"><i class="fa-solid fa-bell"></i><span>Notificaciones</span></a>
+          <a href="#"><i class="fa-solid fa-tags"></i><span>Gestión de categorías</span></a>
         </li>
       </ul>
 
@@ -428,7 +427,7 @@
         <p style="margin-bottom: 15px; color: #666;">Sistema de reportes ciudadanos para mejorar nuestra ciudad.</p>
         
         <div class="user-info">
-          <h4>José Pérez</h4>
+          <h4>Administrador</h4>
           <p>Dirección: Av. El Sol 123, Cusco</p>
         </div>
       </div>
