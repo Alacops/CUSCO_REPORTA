@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cusco Reporta – Registrar Denuncia</title>
+  <title>Cusco Reporta – Inicio</title>
   <link rel="stylesheet" href="../css/styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,43 +17,60 @@
     </div>
 
     <nav class="navbar__menu">
-      <a href="#">Inicio</a>
-      <a href="#">Registra tu denuncia</a>
-      <a href="#">Sobre nosotros</a>
+      <a href="index.html">Inicio</a>
+      <a href="registrar_tu_denuncia.html">Registra tu denuncia</a>
+      <a href="sobre_nosotros.html">Sobre nosotros</a>
       <a href="iniciar-sesion.html">Iniciar Sesión</a>
-      <a href="#">Ayuda</a>
+      <a href="ayuda.html">Ayuda</a>
     </nav>
   </header>
 
   <!-- ======= MAIN ======= -->
   <main class="main">
-    <section class="denuncia">
-      <h1>REGISTRAR DENUNCIA</h1>
-      <p>
-        ¡Hola! Podrá registrar su queja o denuncia de dos maneras: de manera anónima o identificándose. <br>
-        Ingrese los datos que se le solicitan para registrar su queja o denuncia.
-      </p>
 
-      <div class="denuncia__opciones">
-        <div class="opcion">
-          <h2>SIN IDENTIFICARME</h2>
-          <div class="icono red">
-            <img src="../assents/anonimo.svg" alt="Anónimo">
-          </div>
-          <a href="#" class="boton red">Denuncia aquí</a>
-        </div>
-
-        <div class="opcion">
-          <h2>IDENTIFICÁNDOME</h2>
-          <div class="icono blue">
-            <img src="../assents/identificado.svg" alt="Identificado">
-          </div>
-          <a href="#" class="boton blue">Denuncia aquí</a>
-        </div>
+    <!-- ===== HERO ROJO OSCURO ===== -->
+    <section class="hero hero--red">
+      <div class="hero__text">
+        <h1>Cusco Reporta</h1>
+        <p>
+          La plataforma ciudadana para reportar infracciones de tránsito y situaciones
+          que afectan la seguridad vial en nuestra ciudad.
+        </p>
+        <a href="registrar_tu_denuncia.html" class="hero__btn">Reportar ahora</a>
       </div>
 
-      <p class="confia">¡CONFÍA EN NOSOTROS!</p>
+      <div class="hero__img">
+        <img src="../assents/images/traffic_hero.png" alt="Reporte de tránsito">
+      </div>
     </section>
+
+    <!-- ===== SECCIÓN "¿POR QUÉ USAR CUSCO REPORTA?" ===== -->
+    <section class="features">
+      <h2>¿Por qué usar Cusco Reporta?</h2>
+
+      <div class="features__grid">
+
+        <div class="feature feature--red">
+          <img src="../assents/icons/fast.svg" alt="">
+          <h3>Fácil y rápido</h3>
+          <p>Registra una denuncia en minutos desde tu celular o computadora.</p>
+        </div>
+
+        <div class="feature feature--red">
+          <img src="../assents/icons/shield.svg" alt="">
+          <h3>Seguro</h3>
+          <p>Tus datos están protegidos. También puedes reportar de forma anónima.</p>
+        </div>
+
+        <div class="feature feature--red">
+          <img src="../assents/icons/impact.svg" alt="">
+          <h3>Impacto real</h3>
+          <p>Tu reporte contribuye a mejorar la seguridad vial en nuestra ciudad.</p>
+        </div>
+
+      </div>
+    </section>
+
   </main>
 
   <script src="../js/main.js"></script>
