@@ -388,7 +388,10 @@
     <!-- ====== TOPBAR CON ÍCONOS ====== -->
     <div class="topbar">
       <div class="topbar__logo">
-        <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta Logo" />
+        <img
+          src="../assents/images/CuscoReporta.png"
+          alt="Cusco Reporta Logo"
+        />
       </div>
       <nav class="topbar__menu">
         <a href="index.html">Inicio</a>
@@ -413,22 +416,37 @@
 
         <ul class="sidebar__menu">
           <li>
-            <a href="perfil_usuario.html"><i class="fa-solid fa-id-card"></i><span>Ver perfil</span></a>
+            <a href="perfil_usuario.html"
+              ><i class="fa-solid fa-id-card"></i><span>Ver perfil</span></a
+            >
           </li>
           <li>
-            <a href="ReportarIncidencia.html"><i class="fa-solid fa-pen-to-square"></i><span>Reportar</span></a>
+            <a href="ReportarIncidencia.html"
+              ><i class="fa-solid fa-pen-to-square"></i><span>Reportar</span></a
+            >
           </li>
           <li>
-            <a href="registrar_Denuncia.html"><i class="fa-solid fa-triangle-exclamation"></i><span>Denunciar</span></a>
+            <a href="registrar_Denuncia.html"
+              ><i class="fa-solid fa-triangle-exclamation"></i
+              ><span>Denunciar</span></a
+            >
           </li>
           <li>
-            <a href="lista_incidencias.html"><i class="fa-solid fa-list-check"></i><span>Estado de reportes</span></a>
+            <a href="lista_incidencias.html"
+              ><i class="fa-solid fa-list-check"></i
+              ><span>Estado de reportes</span></a
+            >
           </li>
           <li>
-            <a href="MapaIncidiencias(Ciudadano).html" class="active"><i class="fa-solid fa-map-location-dot"></i><span>Mapa de incidencias</span></a>
+            <a href="MapaIncidiencias(Ciudadano).html" class="active"
+              ><i class="fa-solid fa-map-location-dot"></i
+              ><span>Mapa de incidencias</span></a
+            >
           </li>
           <li>
-            <a href="notificaciones.html"><i class="fa-solid fa-bell"></i><span>Notificaciones</span></a>
+            <a href="notificaciones.html"
+              ><i class="fa-solid fa-bell"></i><span>Notificaciones</span></a
+            >
           </li>
         </ul>
 
@@ -447,7 +465,7 @@
             <option value="todos">Todos los incidentes</option>
             <option value="accidente">Accidentes</option>
             <option value="bache">Baches</option>
-            <option value="incendio">Incendios</option>
+            <option value="incendio">Infracciones</option>
           </select>
         </div>
 
@@ -466,7 +484,7 @@
           </div>
           <div class="stat-card incendio">
             <div class="stat-value" id="incendio-count">1</div>
-            <div class="stat-label">Incendios</div>
+            <div class="stat-label">Infraccion</div>
           </div>
         </div>
 
@@ -485,7 +503,7 @@
             </div>
             <div class="legend-item">
               <div class="legend-color incendio-color"></div>
-              <span>Incendio reportado</span>
+              <span>Infraccion reportada</span>
             </div>
           </div>
         </div>
@@ -504,65 +522,122 @@
       }).addTo(map);
 
       const incidencias = [
-        { tipo: "accidente", coords: [-13.515, -71.975], descripcion: "Accidente de tránsito en Av. de la Cultura", fecha: "2023-11-15 08:30" },
-        { tipo: "bache", coords: [-13.517, -71.982], descripcion: "Bache profundo en calle San Andrés", fecha: "2023-11-14 14:20" },
-        { tipo: "incendio", coords: [-13.519, -71.97], descripcion: "Incendio en vivienda – Urb. Ttio", fecha: "2023-11-15 10:45" },
-        { tipo: "bache", coords: [-13.52, -71.984], descripcion: "Hueco en la vía frente al mercado", fecha: "2023-11-13 16:10" },
+        {
+          tipo: "accidente",
+          coords: [-13.515, -71.975],
+          descripcion: "Accidente de tránsito en Av. de la Cultura",
+          fecha: "2023-11-15 08:30",
+        },
+        {
+          tipo: "bache",
+          coords: [-13.517, -71.982],
+          descripcion: "Bache profundo en calle San Andrés",
+          fecha: "2023-11-14 14:20",
+        },
+        {
+          tipo: "incendio",
+          coords: [-13.519, -71.97],
+          descripcion: "Infracion en vivienda – Urb. Ttio",
+          fecha: "2023-11-15 10:45",
+        },
+        {
+          tipo: "bache",
+          coords: [-13.52, -71.984],
+          descripcion: "Hueco en la vía frente al mercado",
+          fecha: "2023-11-13 16:10",
+        },
       ];
 
       const iconos = {
-        accidente: L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/2554/2554961.png", iconSize: [35,35], iconAnchor: [17,34], popupAnchor:[0,-30] }),
-        bache: L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/1161/1161388.png", iconSize: [35,35], iconAnchor: [17,34], popupAnchor:[0,-30] }),
-        incendio: L.icon({ iconUrl: "https://cdn-icons-png.flaticon.com/512/482/482059.png", iconSize: [35,35], iconAnchor: [17,34], popupAnchor:[0,-30] }),
+        accidente: L.icon({
+          iconUrl: "https://cdn-icons-png.flaticon.com/512/2554/2554961.png",
+          iconSize: [35, 35],
+          iconAnchor: [17, 34],
+          popupAnchor: [0, -30],
+        }),
+        bache: L.icon({
+          iconUrl: "https://cdn-icons-png.flaticon.com/512/1161/1161388.png",
+          iconSize: [35, 35],
+          iconAnchor: [17, 34],
+          popupAnchor: [0, -30],
+        }),
+        incendio: L.icon({
+          iconUrl: "https://cdn-icons-png.flaticon.com/512/482/482059.png",
+          iconSize: [35, 35],
+          iconAnchor: [17, 34],
+          popupAnchor: [0, -30],
+        }),
       };
 
       let marcadores = [];
 
-      function mostrarMarcadores(filtro){
-        marcadores.forEach(m=>map.removeLayer(m));
-        marcadores=[];
-        incidencias.filter(i=>filtro==="todos"||i.tipo===filtro).forEach(i=>{
-          const marker=L.marker(i.coords,{icon: iconos[i.tipo]}).bindPopup(`
+      function mostrarMarcadores(filtro) {
+        marcadores.forEach((m) => map.removeLayer(m));
+        marcadores = [];
+        incidencias
+          .filter((i) => filtro === "todos" || i.tipo === filtro)
+          .forEach((i) => {
+            const marker = L.marker(i.coords, { icon: iconos[i.tipo] })
+              .bindPopup(
+                `
             <div style="min-width:200px;">
               <h3 style="margin:0 0 10px; color:#2c3e50; text-transform:capitalize;">${i.tipo}</h3>
               <p style="margin:0 0 8px;">${i.descripcion}</p>
               <p style="margin:0; font-size:0.9em; color:#7f8c8d;">Reportado: ${i.fecha}</p>
-            </div>`).addTo(map);
-          marcadores.push(marker);
-        });
+            </div>`
+              )
+              .addTo(map);
+            marcadores.push(marker);
+          });
         actualizarEstadisticas(filtro);
       }
 
-      function actualizarEstadisticas(filtro){
-        const total=document.getElementById("total-count");
-        const accidentes=document.getElementById("accidente-count");
-        const baches=document.getElementById("bache-count");
-        const incendios=document.getElementById("incendio-count");
+      function actualizarEstadisticas(filtro) {
+        const total = document.getElementById("total-count");
+        const accidentes = document.getElementById("accidente-count");
+        const baches = document.getElementById("bache-count");
+        const incendios = document.getElementById("incendio-count");
 
-        if(filtro==="todos"){
-          total.textContent=incidencias.length;
-          accidentes.textContent=incidencias.filter(i=>i.tipo==="accidente").length;
-          baches.textContent=incidencias.filter(i=>i.tipo==="bache").length;
-          incendios.textContent=incidencias.filter(i=>i.tipo==="incendio").length;
-        }else{
-          const filtradas=incidencias.filter(i=>i.tipo===filtro);
-          total.textContent=filtradas.length;
-          accidentes.textContent=filtro==="accidente"?filtradas.length:0;
-          baches.textContent=filtro==="bache"?filtradas.length:0;
-          incendios.textContent=filtro==="incendio"?filtradas.length:0;
+        if (filtro === "todos") {
+          total.textContent = incidencias.length;
+          accidentes.textContent = incidencias.filter(
+            (i) => i.tipo === "accidente"
+          ).length;
+          baches.textContent = incidencias.filter(
+            (i) => i.tipo === "bache"
+          ).length;
+          incendios.textContent = incidencias.filter(
+            (i) => i.tipo === "incendio"
+          ).length;
+        } else {
+          const filtradas = incidencias.filter((i) => i.tipo === filtro);
+          total.textContent = filtradas.length;
+          accidentes.textContent =
+            filtro === "accidente" ? filtradas.length : 0;
+          baches.textContent = filtro === "bache" ? filtradas.length : 0;
+          incendios.textContent = filtro === "incendio" ? filtradas.length : 0;
         }
       }
 
       mostrarMarcadores("todos");
-      document.getElementById("tipo").addEventListener("change", e=>mostrarMarcadores(e.target.value));
+      document
+        .getElementById("tipo")
+        .addEventListener("change", (e) => mostrarMarcadores(e.target.value));
 
-      L.circle([-13.5171, -71.9784], { color:"#8b1919", fillColor:"#8b1919", fillOpacity:0.1, radius:1500 })
+      L.circle([-13.5171, -71.9784], {
+        color: "#8b1919",
+        fillColor: "#8b1919",
+        fillOpacity: 0.1,
+        radius: 1500,
+      })
         .addTo(map)
         .bindPopup("Centro de Cusco");
 
-      document.getElementById("logoutBtn").addEventListener("click", function() {
-        window.location.href = "index.html";
-      });
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", function () {
+          window.location.href = "index.html";
+        });
     </script>
   </body>
 </html>
