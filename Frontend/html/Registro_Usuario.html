@@ -207,7 +207,11 @@
         // Redirigir a la página de confirmación
  	 window.location.href = "registro_exitoso.html";
       }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
     });
   </script>
+  <script src="../js/registro_usuario.js"></script>
 </body>
 </html>

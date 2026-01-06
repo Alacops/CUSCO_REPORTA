@@ -4,252 +4,214 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Iniciar Sesión - Cusco Reporta</title>
-  
-  <!-- RUTAS CORREGIDAS para Netlify -->
-  <link rel="stylesheet" href="css/styles.css" />
+
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
-    /* Estilos para los botones corregidos */
-    .auth-buttons {
-      display: flex;
-      margin: 30px auto;
-      justify-content: center;
-      gap: 0;
-      max-width: 400px;
+    body { font-family: "Poppins", sans-serif; }
+    .page-wrap{
+      min-height: calc(100vh - 80px);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 40px 16px;
+      background: radial-gradient(circle at top, #7b0000 0%, #3b0000 60%, #1c0000 100%);
     }
-    
-    .auth-btn {
-      border: none;
-      padding: 12px 24px;
-      color: white;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      flex: 1;
-      font-size: 16px;
+    .auth-card{
+      width: min(920px, 96vw);
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      padding: 26px 22px 22px;
     }
-    
-    .auth-btn:hover {
-      filter: brightness(1.15);
-      transform: translateY(-2px);
+    .auth-header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap: 10px;
+      text-align:center;
+      margin-bottom: 18px;
     }
-    
-    .auth-btn-login {
-      background-color: #b22222;
-      border-radius: 12px 0 0 12px;
+    .auth-header img{
+      height: 48px;
+      object-fit: contain;
     }
-    
-    .auth-btn-register {
-      background-color: #c43d3d;
-      border-radius: 0 12px 12px 0;
-    }
-    
-    /* Estilos del formulario */
-    .login-form {
-      max-width: 400px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: #333;
-    }
-    
-    .form-input {
-      width: 100%;
-      padding: 12px 16px;
-      background-color: #f8f9fa;
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.3s;
-    }
-    
-    .form-input:focus {
-      outline: none;
-      border-color: #b22222;
-      background-color: white;
-    }
-    
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background-color: #8b0000;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 10px;
-    }
-    
-    .submit-btn:hover {
-      background-color: #a52a2a;
-    }
-    
-    .confia {
-      text-align: center;
-      font-weight: 700;
+    .auth-header h1{
+      margin: 0;
       color: #8b0000;
-      margin-top: 30px;
-      font-size: 18px;
+      font-size: 1.55rem;
+      letter-spacing: .5px;
     }
-    
-    /* Responsive */
-    @media (max-width: 480px) {
-      .auth-btn {
-        padding: 10px 16px;
-        font-size: 14px;
-      }
-      
-      .auth-buttons {
-        flex-direction: column;
-        gap: 10px;
-      }
-      
-      .auth-btn-login,
-      .auth-btn-register {
-        border-radius: 8px;
-      }
+    .auth-header p{
+      margin: 0;
+      color:#555;
+      font-size: .95rem;
+    }
+
+    .toggle-row{
+      display:flex;
+      justify-content:center;
+      margin: 18px 0 22px;
+    }
+    .toggle{
+      display:flex;
+      border-radius: 999px;
+      overflow:hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+    .toggle a{
+      padding: 10px 18px;
+      text-decoration:none;
+      font-weight: 700;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background:#c43d3d;
+      opacity:.9;
+    }
+    .toggle a.active{
+      background:#8b0000;
+      opacity: 1;
+    }
+
+    .form{
+      width: min(420px, 100%);
+      margin: 0 auto;
+    }
+    .form-group{ margin-bottom: 16px; }
+    .form-label{
+      display:block;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color:#333;
+    }
+    .form-input{
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #ddd;
+      background: #f8f9fa;
+      outline: none;
+      font-weight: 600;
+    }
+    .form-input:focus{
+      border-color:#8b0000;
+      background:#fff;
+    }
+    .submit-btn{
+      width:100%;
+      border:none;
+      background:#8b0000;
+      color:#fff;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform .05s ease;
+    }
+    .submit-btn:active{ transform: scale(.99); }
+
+    .links{
+      display:flex;
+      justify-content:center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .links a{
+      color:#8b0000;
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .footer-msg{
+      text-align:center;
+      margin-top: 18px;
+      color:#666;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    @media (max-width: 600px){
+      .auth-card{ padding: 20px 16px 18px; }
     }
   </style>
 </head>
+
 <body>
-  <!-- ======= HEADER ======= -->
+  <!-- NAVBAR (usa tu estilo existente si ya lo tienes en styles.css) -->
   <header class="navbar">
-    <div class="navbar__left">
-      <!-- RUTAS CORREGIDAS -->
-      <img src="assents/images/MTC.png" alt="Logo MTC" class="navbar__logo">
-      <img src="assents/images/CuscoReporta.png" alt="Logo Cusco Reporta" class="navbar__logo">
+    <div class="navbar__left" style="display:flex; align-items:center; gap:10px;">
+      <img src="../assents/images/MTC.png" alt="Logo MTC" class="navbar__logo">
+      <img src="../assents/images/CuscoReporta.png" alt="Logo Cusco Reporta" class="navbar__logo">
     </div>
 
     <nav class="navbar__menu">
       <a href="index.html">Inicio</a>
-      <a href="registrar_Denuncia.html">Registra tu denuncia</a>
+      <a href="registrar_tu_denuncia.html">Registra tu denuncia</a>
       <a href="sobre_nosotros.html">Sobre nosotros</a>
-      <a href="iniciar-sesion.html">Iniciar Sesión</a>
+      <a href="iniciar-sesion.html" class="active">Iniciar Sesión</a>
       <a href="ayuda.html">Ayuda</a>
     </nav>
   </header>
 
-  <!-- ======= CONTENIDO PRINCIPAL ======= -->
-  <main class="main">
-    <section class="denuncia" style="text-align: center; padding: 40px 20px;">
-      <h1 style="background-color: #8b0000; color: white; padding: 15px 30px; border-radius: 10px; display: inline-block; margin-bottom: 30px;">
-        INICIO DE SESIÓN
-      </h1>
-
-      <!-- FORMULARIO DE LOGIN (PRIMERO) -->
-      <div class="login-form">
-        <form id="loginForm">
-          <div class="form-group">
-            <label for="username" class="form-label">Nombre de Usuario o Email</label>
-            <input type="text" id="username" name="username" class="form-input" 
-                   placeholder="usuario@ejemplo.com" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" id="password" name="password" class="form-input" 
-                   placeholder="••••••••" required>
-          </div>
-          
-          <button type="submit" class="submit-btn">
-            🔐 Iniciar Sesión
-          </button>
-        </form>
+  <main class="page-wrap">
+    <section class="auth-card">
+      <div class="auth-header">
+        <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta">
+        <h1>INICIO DE SESIÓN</h1>
+        <p>Ingresa con tu usuario o correo para acceder al panel.</p>
       </div>
 
-      <!-- BOTONES DE OPCIÓN (DESPUÉS DEL FORMULARIO) -->
-      <div style="margin: 40px 0;">
-        <p style="color: #666; margin-bottom: 15px; font-weight: 600;">
-          ¿No tienes una cuenta? Regístrate para reportar incidencias
-        </p>
-        
-        <div class="auth-buttons">
-          <!-- Este botón es solo visual (ya estamos en login) -->
-          <a href="iniciar-sesion.html" class="auth-btn auth-btn-login" 
-             style="opacity: 0.9; cursor: default;">
-            <span>👤</span> Iniciar Sesión
-          </a>
-          
-          <!-- Botón REGISTRARSE que SÍ funciona -->
-          <a href="registro_usuario.html" class="auth-btn auth-btn-register">
-            Registrarse <span>🏬</span>
-          </a>
+      <div class="toggle-row">
+        <div class="toggle">
+          <a href="iniciar-sesion.html" class="active">👤 Iniciar Sesión</a>
+          <a href="Registro_Usuario.html">🏬 Registrarse</a>
         </div>
       </div>
 
-      <p class="confia">¡CONFÍA EN NOSOTROS!</p>
-      
-      <!-- Enlace adicional -->
-      <div style="margin-top: 20px;">
-        <a href="index.html" style="color: #8b0000; text-decoration: none; font-weight: 600;">
-          ← Volver al Inicio
-        </a>
-      </div>
+      <form id="formLogin" class="form">
+        <div class="form-group">
+          <label for="username" class="form-label">Nombre de Usuario o Email</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-input"
+            placeholder="usuario@ejemplo.com"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <button type="submit" class="submit-btn">🔐 Iniciar Sesión</button>
+
+        <div class="links">
+          <a href="recuperar_contrasena.html">Recuperar contraseña</a>
+          <a href="index.html">← Volver al inicio</a>
+        </div>
+      </form>
+
+      <div class="footer-msg">¡CONFÍA EN NOSOTROS!</div>
     </section>
   </main>
 
-  <!-- Cargar JavaScript -->
-  <script src="js/main.js"></script>
-  
-  <!-- Script específico para esta página -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const loginForm = document.getElementById('loginForm');
-      
-      if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          const username = document.getElementById('username').value.trim();
-          const password = document.getElementById('password').value.trim();
-          
-          if (!username || !password) {
-            alert('Por favor, completa ambos campos.');
-            return;
-          }
-          
-          // Simulación de login exitoso
-          console.log('Intento de login:', { username, password });
-          
-          // Aquí iría la conexión real con Supabase
-          // Por ahora, simulamos éxito
-          alert('✅ ¡Inicio de sesión exitoso!\n\nEn una versión real, esto conectaría con Supabase Auth.');
-          
-          // Redirigir al panel (puedes cambiar la página)
-          // window.location.href = 'panel.html';
-          
-          // Opcional: Limpiar formulario
-          // loginForm.reset();
-        });
-      }
-      
-      // Mensaje de bienvenida
-      console.log('Página de login cargada correctamente');
-      
-      // Verificar que el botón Registrarse funciona
-      const registroBtn = document.querySelector('.auth-btn-register');
-      if (registroBtn) {
-        console.log('Botón Registrarse encontrado, href:', registroBtn.href);
-      }
-    });
-  </script>
+  <!-- JS real de login (backend) -->
+  <script src="../js/login.js"></script>
 </body>
 </html>

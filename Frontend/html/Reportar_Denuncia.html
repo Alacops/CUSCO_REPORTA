@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reportar / Denunciar - Cusco Reporta</title>
+
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Leaflet (Mapa) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    .card{background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:18px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .grid-1{display:grid;grid-template-columns:1fr;gap:14px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-weight:800;font-size:.9rem}
+    .badge-ok{background:#e8f7ea;color:#1c6b2a}
+    .badge-warn{background:#fff3cd;color:#856404}
+    .badge-info{background:#e7f1ff;color:#0b3d91}
+    label{display:block;font-weight:800;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px}
+    textarea{min-height:110px;resize:vertical}
+    .btn{border:none;border-radius:10px;padding:12px 14px;font-weight:900;cursor:pointer}
+    .btn-primary{background:#8b0000;color:#fff}
+    .btn-outline{background:#fff;border:1px solid #ccc}
+    .muted{color:#666}
+    .error{color:#b00020;font-weight:800}
+    .ok{color:#1c6b2a;font-weight:800}
+    .map-wrap{border:1px solid #e5e5e5;border-radius:12px;overflow:hidden}
+    #map{width:100%;height:320px}
+    .hint{font-size:.9rem;color:#555;margin-top:6px}
+    .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .pill{padding:6px 10px;border-radius:999px;background:#f4f4f4;font-weight:800;font-size:.85rem;color:#444}
+
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+  </style>
+</head>
+
+<body>
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar__logo">
+      <img src="../assents/images/CuscoReporta.png" alt="Cusco Reporta Logo">
+    </div>
+    <nav class="topbar__menu">
+      <a href="index.html">Inicio</a>
+      <a href="sobre_nosotros.html">Sobre nosotros</a>
+      <a href="ayuda.html">Ayuda</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" style="display:flex;flex-direction:column;justify-content:flex-start;">
+      <div class="sidebar__user" style="margin-bottom:10px;">
+        <div class="sidebar__avatar"><i class="fa-solid fa-user"></i></div>
+        <div class="sidebar__info">
+          <h3 id="nombreUsuario">Invitado</h3>
+          <p id="rolUsuario">—</p>
+        </div>
+      </div>
+
+      <!-- ✅ Menú optimizado (solo 1 entrada para reportar/denunciar) -->
+      <ul class="sidebar__menu" style="margin-top:0;padding-top:0;list-style:none;">
+        <li>
+          <a href="reportar_denuncia.html" class="active">
+            <i class="fa-solid fa-triangle-exclamation" style="width:20px;"></i>
+            <span style="margin-left:8px;">Reportar / Denunciar</span>
+          </a>
+        </li>
+        <li>
+          <a href="lista_incidencias.html">
+            <i class="fa-solid fa-list-check" style="width:20px;"></i>
+            <span style="margin-left:8px;">Estado de reportes</span>
+          </a>
+        </li>
+        <li>
+          <a href="MapaIncidiencias(Ciudadano).html">
+            <i class="fa-solid fa-map-location-dot" style="width:20px;"></i>
+            <span style="margin-left:8px;">Mapa de incidencias</span>
+          </a>
+        </li>
+        <li>
+          <a href="notificaciones.html">
+            <i class="fa-solid fa-bell" style="width:20px;"></i>
+            <span style="margin-left:8px;">Notificaciones</span>
+          </a>
+        </li>
+      </ul>
+
+      <button class="logout-btn" id="logoutBtn" style="margin-top:auto;">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar sesión
+      </button>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="main-content">
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <div>
+          <h1>Reportar / Denunciar</h1>
+          <p class="muted">Registra una incidencia con sesión o en modo incógnito.</p>
+          <div class="inline" style="margin-top:8px;">
+            <span class="pill" id="pillModo">Modo: —</span>
+            <span class="pill" id="pillUser">Usuario: —</span>
+          </div>
+        </div>
+
+        <div id="modoBox" class="badge badge-warn">
+          <i class="fa-solid fa-user-secret"></i>
+          <span>Sesión anónima</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <form id="formInc">
+          <div class="grid">
+            <div>
+              <label for="fecha_incidente">Fecha</label>
+              <input type="date" id="fecha_incidente" required>
+            </div>
+
+            <div>
+              <label for="placa">Placa (opcional)</label>
+              <input id="placa" placeholder="Ej: X1A-123">
+              <small class="muted">.</small>
+            </div>
+
+            <div>
+              <label for="categoria_id">Categoría</label>
+              <select id="categoria_id" required>
+                <option value="">Seleccione una categoría</option>
+                <option value="1">Mal estacionamiento</option>
+                <option value="2">Ignorar luz roja</option>
+                <option value="3">Accidente</option>
+                <option value="4">Exceso de velocidad</option>
+                <option value="5">Conductor ebrio</option>
+                <option value="6">Bache / Pista en mal estado</option>
+                <option value="7">Semáforo malogrado</option>
+                <option value="8">Señalización deficiente</option>
+                <option value="9">Obstrucción de vía</option>
+                <option value="10">Otro</option>
+              </select>
+              <small class="muted">Selecciona una categoría para clasificar el reporte.</small>
+
+            </div>
+
+            <div>
+              <label for="referencia_lugar">Referencia del lugar</label>
+              <input id="referencia_lugar" placeholder="Ej: Cerca al paradero principal" required>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top:12px;">
+            <div>
+              <label for="titulo">Título</label>
+              <input id="titulo" placeholder="Ej: Bache en la vía / Conductor ebrio" required>
+            </div>
+            <div>
+              <label for="distrito">Distrito</label>
+              <input id="distrito" placeholder="Ej: Wanchaq" required>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top:12px;">
+            <div>
+              <label for="departamento">Departamento</label>
+              <input id="departamento" value="Cusco">
+            </div>
+            <div>
+              <label for="provincia">Provincia</label>
+              <input id="provincia" value="Cusco">
+            </div>
+          </div>
+
+          <!-- ✅ MAPA -->
+          <div class="grid-1" style="margin-top:12px;">
+            <div>
+              <label>Ubicación en el mapa</label>
+              <div class="map-wrap">
+                <div id="map"></div>
+              </div>
+              <div class="hint">
+                Haz <b>click</b> en el mapa para marcar el punto o <b>arrastra</b> el marcador.
+                <span class="muted">(Se guardará lat/lng automáticamente)</span>
+              </div>
+
+              <!-- inputs ocultos para enviar a la API -->
+              <input type="hidden" id="lat">
+              <input type="hidden" id="lng">
+            </div>
+          </div>
+
+          <div class="grid-1" style="margin-top:12px;">
+            <div>
+              <label for="descripcion">Descripción</label>
+              <textarea id="descripcion" placeholder="Describe lo sucedido..." required></textarea>
+            </div>
+
+            <div>
+              <label for="archivo">Evidencia (imagen opcional)</label>
+              <input type="file" id="archivo" accept="image/*">
+              <small class="muted">Se enviará como evidencia y se asociará a la incidencia.</small>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:14px;justify-content:flex-end;">
+            <button type="button" class="btn btn-outline" id="btnLimpiar">Limpiar</button>
+            <button type="submit" class="btn btn-primary" id="btnEnviar">
+              <i class="fa-solid fa-paper-plane"></i> Reportar
+            </button>
+          </div>
+
+          <div style="margin-top:10px;">
+            <p id="msg" class="muted"></p>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ================== CONFIG ==================
+    const API_BASE = "http://localhost:3000";
+
+    // Endpoints posibles (por si tu backend lo nombra diferente)
+    const CATEG_ENDPOINTS = [
+      "/categorias_incidencia"];
+
+    // Endpoints posibles para crear incidencia con evidencia
+    const CREATE_ENDPOINTS = [
+      "/incidencias/create",
+      "/incidencias",
+      "/incidencias/crear"
+    ];
+
+    // ================== SESIÓN / MODO ==================
+    function getModo() {
+      // Si el usuario eligió "incognito" desde registrar_tu_denuncia.html
+      const modo = localStorage.getItem("modo_denuncia"); // incognito | identificado
+      const token = localStorage.getItem("token");
+      const userRaw = localStorage.getItem("user");
+
+      // Si modo es incognito, respetamos eso aunque haya token
+      if (modo === "incognito") {
+        return { modo: "incognito", token: null, user: null };
+      }
+
+      // Si no es incognito y hay token, entonces identificado
+      if (token) {
+        let user = null;
+        try { user = userRaw ? JSON.parse(userRaw) : null; } catch {}
+        return { modo: "identificado", token, user };
+      }
+
+      // Sin token => anónimo
+      return { modo: "incognito", token: null, user: null };
+    }
+
+    function pintarModo() {
+      const { modo, user } = getModo();
+
+      const nombreEl = document.getElementById("nombreUsuario");
+      const rolEl = document.getElementById("rolUsuario");
+      const box = document.getElementById("modoBox");
+      const pillModo = document.getElementById("pillModo");
+      const pillUser = document.getElementById("pillUser");
+
+      if (modo === "identificado") {
+        box.className = "badge badge-ok";
+        box.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Sesión identificada</span>`;
+        pillModo.textContent = "Modo: Identificado";
+
+        const name = user?.nombre_completo || user?.username || "Usuario";
+        pillUser.textContent = `Usuario: ${name}`;
+
+        nombreEl.textContent = name;
+        rolEl.textContent = (user?.rol_id === 2) ? "Administrador" : "Ciudadano";
+      } else {
+        box.className = "badge badge-warn";
+        box.innerHTML = `<i class="fa-solid fa-user-secret"></i><span>Sesión anónima</span>`;
+        pillModo.textContent = "Modo: Anónimo";
+        pillUser.textContent = "Usuario: Invitado";
+
+        nombreEl.textContent = "Invitado";
+        rolEl.textContent = "—";
+      }
+    }
+
+    // ================== MAPA ==================
+    let map, marker;
+
+    function setLatLng(lat, lng) {
+      document.getElementById("lat").value = String(lat);
+      document.getElementById("lng").value = String(lng);
+    }
+
+    function initMap() {
+      // Cusco centro aprox
+      const defaultLat = -13.53195;
+      const defaultLng = -71.96746;
+
+      map = L.map("map").setView([defaultLat, defaultLng], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "© OpenStreetMap"
+      }).addTo(map);
+
+      marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+
+      setLatLng(defaultLat, defaultLng);
+
+      map.on("click", (e) => {
+        const { lat, lng } = e.latlng;
+        marker.setLatLng([lat, lng]);
+        setLatLng(lat, lng);
+      });
+
+      marker.on("dragend", () => {
+        const p = marker.getLatLng();
+        setLatLng(p.lat, p.lng);
+      });
+    }
+
+    // ================== CATEGORÍAS ==================
+    async function fetchJsonTry(url, opts) {
+      const r = await fetch(url, opts);
+      const j = await r.json().catch(() => ({}));
+      return { ok: r.ok, status: r.status, json: j };
+    }
+
+    function normalizarCategorias(payload) {
+      // Soporta: {ok:true, categorias:[...]} o directamente [...]
+      if (Array.isArray(payload)) return payload;
+      if (payload && Array.isArray(payload.categorias)) return payload.categorias;
+      if (payload && Array.isArray(payload.data)) return payload.data;
+      return [];
+    }
+
+    async function cargarCategorias() {
+      const sel = document.getElementById("categoria_id");
+      sel.innerHTML = `<option value="">Cargando categorías...</option>`;
+
+      for (const ep of CATEG_ENDPOINTS) {
+        try {
+          const { ok, json } = await fetchJsonTry(`${API_BASE}${ep}`);
+          if (!ok) continue;
+
+          const cats = normalizarCategorias(json);
+          if (!cats.length) continue;
+
+          // Espera objetos tipo: {id, nombre} o {categoria_id, categoria}
+          sel.innerHTML = `<option value="">Seleccione</option>`;
+          cats.forEach(c => {
+            const id = c.id ?? c.categoria_id ?? c.categorias_incidencia_id;
+            const nombre = c.nombre ?? c.categoria ?? c.descripcion ?? c.titulo ?? `Categoría ${id}`;
+            if (id == null) return;
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = nombre;
+            sel.appendChild(opt);
+          });
+
+          return; // éxito
+        } catch (e) {
+          // seguimos probando el siguiente endpoint
+        }
+      }
+
+      // Si nada funcionó:
+      sel.innerHTML = `<option value="">No se pudieron cargar categorías</option>`;
+    }
+
+    // ================== CREAR INCIDENCIA (con evidencia opcional) ==================
+    async function crearIncidencia(formData, headersBase) {
+      // probamos endpoints hasta que uno funcione
+      for (const ep of CREATE_ENDPOINTS) {
+        const res = await fetch(`${API_BASE}${ep}`, {
+          method: "POST",
+          headers: headersBase, // NO pongas Content-Type si usas FormData
+          body: formData
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && (data.ok === true || data.id || data.incidencia_id)) {
+          return { ok: true, data };
+        }
+      }
+      return { ok: false, message: "No se pudo registrar (endpoint no encontrado o error interno)." };
+    }
+
+    function setMsg(text, kind) {
+      const el = document.getElementById("msg");
+      el.className = kind === "error" ? "error" : kind === "ok" ? "ok" : "muted";
+      el.textContent = text || "";
+    }
+
+    function hoyISO() {
+      return new Date().toISOString().slice(0,10);
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("fecha_incidente").value = hoyISO();
+      document.getElementById("placa").value = "";
+      document.getElementById("categoria_id").value = "";
+      document.getElementById("referencia_lugar").value = "";
+      document.getElementById("titulo").value = "";
+      document.getElementById("departamento").value = "Cusco";
+      document.getElementById("provincia").value = "Cusco";
+      document.getElementById("distrito").value = "";
+      document.getElementById("descripcion").value = "";
+      document.getElementById("archivo").value = "";
+      setMsg("", "muted");
+    }
+
+    // ================== INIT ==================
+    document.addEventListener("DOMContentLoaded", async () => {
+      pintarModo();
+
+      // fecha por defecto
+      document.getElementById("fecha_incidente").value = hoyISO();
+
+      // cargar mapa (cuando Leaflet ya esté)
+      // (Leaflet se cargó con defer, así que ya debería existir aquí)
+      initMap();
+
+      // categorías desde BD
+      await cargarCategorias();
+
+      // logout: si estás identificado, limpia token; si estás anónimo, solo vuelve a inicio
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        if (confirm("¿Estás seguro de que quieres cerrar sesión?")) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.setItem("modo_denuncia", "incognito");
+          window.location.href = "index.html";
+        }
+      });
+
+      document.getElementById("btnLimpiar").addEventListener("click", () => {
+        limpiarFormulario();
+      });
+
+      document.getElementById("formInc").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        setMsg("Enviando reporte...", "muted");
+
+        const { modo, token } = getModo();
+
+        // Armamos FormData para soportar imagen
+        const fd = new FormData();
+
+        // Campos (ajusta nombres si tu backend los espera distinto)
+        fd.append("fecha_incidente", document.getElementById("fecha_incidente").value);
+        fd.append("categoria_id", document.getElementById("categoria_id").value);
+        fd.append("placa", document.getElementById("placa").value.trim());
+        fd.append("titulo", document.getElementById("titulo").value.trim());
+        fd.append("descripcion", document.getElementById("descripcion").value.trim());
+        fd.append("referencia_lugar", document.getElementById("referencia_lugar").value.trim());
+        fd.append("departamento", document.getElementById("departamento").value.trim());
+        fd.append("provincia", document.getElementById("provincia").value.trim());
+        fd.append("distrito", document.getElementById("distrito").value.trim());
+
+        // mapa
+        fd.append("lat", document.getElementById("lat").value);
+        fd.append("lng", document.getElementById("lng").value);
+
+        // modo (para que tu backend sepa si es anónimo)
+        fd.append("modo", modo); // incognito | identificado
+
+        // evidencia
+        const file = document.getElementById("archivo").files?.[0];
+        if (file) fd.append("archivo", file);
+
+        // headers (solo Authorization si identificado)
+        const headers = {};
+        if (token && modo === "identificado") headers["Authorization"] = `Bearer ${token}`;
+
+        try {
+          const result = await crearIncidencia(fd, headers);
+
+          if (!result.ok) {
+            setMsg(result.message || "No se pudo registrar. Revisa tu API.", "error");
+            return;
+          }
+
+          setMsg("✅ Reporte registrado correctamente.", "ok");
+          // opcional: redirigir a lista de incidencias
+          // setTimeout(() => window.location.href = "lista_incidencias.html", 800);
+        } catch (err) {
+          console.error(err);
+          setMsg("❌ Error al conectar con la API (¿backend activo?).", "error");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
