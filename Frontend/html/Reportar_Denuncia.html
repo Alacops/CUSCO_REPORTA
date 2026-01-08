@@ -35,7 +35,8 @@
     .hint{font-size:.9rem;color:#555;margin-top:6px}
     .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .pill{padding:6px 10px;border-radius:999px;background:#f4f4f4;font-weight:800;font-size:.85rem;color:#444}
-
+    .section-title{margin: 16px 0 10px; font-weight: 900; color:#333;}
+    .hr{margin:18px 0; border:none; border-top:1px solid #eee;}
     @media (max-width:900px){ .grid{grid-template-columns:1fr} }
   </style>
 </head>
@@ -64,7 +65,6 @@
         </div>
       </div>
 
-      <!-- ✅ Menú optimizado (solo 1 entrada para reportar/denunciar) -->
       <ul class="sidebar__menu" style="margin-top:0;padding-top:0;list-style:none;">
         <li>
           <a href="reportar_denuncia.html" class="active">
@@ -126,26 +126,15 @@
             <div>
               <label for="placa">Placa (opcional)</label>
               <input id="placa" placeholder="Ej: X1A-123">
-              <small class="muted">.</small>
+              <small class="muted">Se guardará para permitir consulta por placa.</small>
             </div>
 
             <div>
               <label for="categoria_id">Categoría</label>
               <select id="categoria_id" required>
-                <option value="">Seleccione una categoría</option>
-                <option value="1">Mal estacionamiento</option>
-                <option value="2">Ignorar luz roja</option>
-                <option value="3">Accidente</option>
-                <option value="4">Exceso de velocidad</option>
-                <option value="5">Conductor ebrio</option>
-                <option value="6">Bache / Pista en mal estado</option>
-                <option value="7">Semáforo malogrado</option>
-                <option value="8">Señalización deficiente</option>
-                <option value="9">Obstrucción de vía</option>
-                <option value="10">Otro</option>
+                <option value="">Cargando categorías...</option>
               </select>
-              <small class="muted">Selecciona una categoría para clasificar el reporte.</small>
-
+              <small class="muted">Se carga desde tu BD (tabla categorías).</small>
             </div>
 
             <div>
@@ -176,7 +165,7 @@
             </div>
           </div>
 
-          <!-- ✅ MAPA -->
+          <!-- MAPA -->
           <div class="grid-1" style="margin-top:12px;">
             <div>
               <label>Ubicación en el mapa</label>
@@ -188,7 +177,6 @@
                 <span class="muted">(Se guardará lat/lng automáticamente)</span>
               </div>
 
-              <!-- inputs ocultos para enviar a la API -->
               <input type="hidden" id="lat">
               <input type="hidden" id="lng">
             </div>
@@ -218,6 +206,23 @@
             <p id="msg" class="muted"></p>
           </div>
         </form>
+
+        <hr class="hr">
+
+        <!-- CONSULTA POR PLACA -->
+        <div>
+          <div class="section-title">Consultar por placa</div>
+          <div class="row" style="align-items:center;">
+            <div style="flex:1; min-width:220px;">
+              <input id="placaConsulta" placeholder="Ej: X1A-123">
+            </div>
+            <button type="button" class="btn btn-outline" id="btnConsultarPlaca">
+              <i class="fa-solid fa-magnifying-glass"></i> Consultar
+            </button>
+          </div>
+
+          <div id="resultadoPlaca" class="muted" style="margin-top:10px;"></div>
+        </div>
       </div>
     </main>
   </div>
@@ -226,48 +231,66 @@
     // ================== CONFIG ==================
     const API_BASE = "http://localhost:3000";
 
-    // Endpoints posibles (por si tu backend lo nombra diferente)
-    const CATEG_ENDPOINTS = [
-      "/categorias_incidencia"];
+    // ================== HELPERS ==================
+    const $ = (id) => document.getElementById(id);
 
-    // Endpoints posibles para crear incidencia con evidencia
-    const CREATE_ENDPOINTS = [
-      "/incidencias/create",
-      "/incidencias",
-      "/incidencias/crear"
-    ];
+    function hoyISO() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
 
-    // ================== SESIÓN / MODO ==================
+    function normalizePlaca(p) {
+      return String(p || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "")
+        .replace(/[^A-Z0-9-]/g, "");
+    }
+
+    function setMsg(text, kind = "muted") {
+      const el = $("msg");
+      if (!el) return;
+      el.className = kind;
+      el.textContent = text || "";
+    }
+
+    async function safeJson(res) {
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) return res.json();
+      const txt = await res.text();
+      return { ok: false, message: txt || "Respuesta no JSON" };
+    }
+
+    function getUserFromStorage() {
+      try {
+        const raw = localStorage.getItem("user");
+        return raw ? JSON.parse(raw) : null;
+      } catch {
+        return null;
+      }
+    }
+
     function getModo() {
-      // Si el usuario eligió "incognito" desde registrar_tu_denuncia.html
       const modo = localStorage.getItem("modo_denuncia"); // incognito | identificado
       const token = localStorage.getItem("token");
-      const userRaw = localStorage.getItem("user");
+      const user = getUserFromStorage();
 
-      // Si modo es incognito, respetamos eso aunque haya token
-      if (modo === "incognito") {
-        return { modo: "incognito", token: null, user: null };
-      }
-
-      // Si no es incognito y hay token, entonces identificado
-      if (token) {
-        let user = null;
-        try { user = userRaw ? JSON.parse(userRaw) : null; } catch {}
-        return { modo: "identificado", token, user };
-      }
-
-      // Sin token => anónimo
+      if (modo === "incognito") return { modo: "incognito", token: null, user: null };
+      if (token) return { modo: "identificado", token, user };
       return { modo: "incognito", token: null, user: null };
     }
 
     function pintarModo() {
       const { modo, user } = getModo();
 
-      const nombreEl = document.getElementById("nombreUsuario");
-      const rolEl = document.getElementById("rolUsuario");
-      const box = document.getElementById("modoBox");
-      const pillModo = document.getElementById("pillModo");
-      const pillUser = document.getElementById("pillUser");
+      const nombreEl = $("nombreUsuario");
+      const rolEl = $("rolUsuario");
+      const box = $("modoBox");
+      const pillModo = $("pillModo");
+      const pillUser = $("pillUser");
 
       if (modo === "identificado") {
         box.className = "badge badge-ok";
@@ -294,12 +317,11 @@
     let map, marker;
 
     function setLatLng(lat, lng) {
-      document.getElementById("lat").value = String(lat);
-      document.getElementById("lng").value = String(lng);
+      $("lat").value = String(lat);
+      $("lng").value = String(lng);
     }
 
     function initMap() {
-      // Cusco centro aprox
       const defaultLat = -13.53195;
       const defaultLng = -71.96746;
 
@@ -326,113 +348,206 @@
       });
     }
 
-    // ================== CATEGORÍAS ==================
-    async function fetchJsonTry(url, opts) {
-      const r = await fetch(url, opts);
-      const j = await r.json().catch(() => ({}));
-      return { ok: r.ok, status: r.status, json: j };
-    }
-
+    // ================== CATEGORÍAS (DESDE BD) ==================
     function normalizarCategorias(payload) {
-      // Soporta: {ok:true, categorias:[...]} o directamente [...]
+      // soporta: {ok:true, categorias:[...]}  o array directo
       if (Array.isArray(payload)) return payload;
       if (payload && Array.isArray(payload.categorias)) return payload.categorias;
       if (payload && Array.isArray(payload.data)) return payload.data;
+      if (payload && Array.isArray(payload.rows)) return payload.rows;
       return [];
     }
 
     async function cargarCategorias() {
-      const sel = document.getElementById("categoria_id");
+      const sel = $("categoria_id");
       sel.innerHTML = `<option value="">Cargando categorías...</option>`;
 
-      for (const ep of CATEG_ENDPOINTS) {
-        try {
-          const { ok, json } = await fetchJsonTry(`${API_BASE}${ep}`);
-          if (!ok) continue;
+      try {
+        // tu endpoint backend: /categorias_incidencia
+        const res = await fetch(`${API_BASE}/categorias_incidencia`);
+        const data = await safeJson(res);
 
-          const cats = normalizarCategorias(json);
-          if (!cats.length) continue;
+        const cats = normalizarCategorias(data);
 
-          // Espera objetos tipo: {id, nombre} o {categoria_id, categoria}
-          sel.innerHTML = `<option value="">Seleccione</option>`;
-          cats.forEach(c => {
-            const id = c.id ?? c.categoria_id ?? c.categorias_incidencia_id;
-            const nombre = c.nombre ?? c.categoria ?? c.descripcion ?? c.titulo ?? `Categoría ${id}`;
-            if (id == null) return;
-            const opt = document.createElement("option");
-            opt.value = id;
-            opt.textContent = nombre;
-            sel.appendChild(opt);
-          });
-
-          return; // éxito
-        } catch (e) {
-          // seguimos probando el siguiente endpoint
+        if (!res.ok || !cats.length) {
+          sel.innerHTML = `<option value="">No se pudieron cargar categorías</option>`;
+          return;
         }
-      }
 
-      // Si nada funcionó:
-      sel.innerHTML = `<option value="">No se pudieron cargar categorías</option>`;
-    }
+        sel.innerHTML = `<option value="">Seleccione una categoría</option>`;
 
-    // ================== CREAR INCIDENCIA (con evidencia opcional) ==================
-    async function crearIncidencia(formData, headersBase) {
-      // probamos endpoints hasta que uno funcione
-      for (const ep of CREATE_ENDPOINTS) {
-        const res = await fetch(`${API_BASE}${ep}`, {
-          method: "POST",
-          headers: headersBase, // NO pongas Content-Type si usas FormData
-          body: formData
+        cats.forEach((c) => {
+          const id = c.id ?? c.categoria_id ?? c.categorias_incidencia_id;
+          const nombre = c.nombre ?? c.categoria ?? c.descripcion ?? c.titulo;
+          if (id == null || !nombre) return;
+
+          const opt = document.createElement("option");
+          opt.value = String(id);
+          opt.textContent = String(nombre);
+          sel.appendChild(opt);
         });
 
-        const data = await res.json().catch(() => ({}));
-        if (res.ok && (data.ok === true || data.id || data.incidencia_id)) {
-          return { ok: true, data };
+        if (sel.options.length <= 1) {
+          sel.innerHTML = `<option value="">No se pudieron interpretar categorías</option>`;
         }
+      } catch (e) {
+        console.error(e);
+        sel.innerHTML = `<option value="">No se pudieron cargar categorías</option>`;
       }
-      return { ok: false, message: "No se pudo registrar (endpoint no encontrado o error interno)." };
     }
 
-    function setMsg(text, kind) {
-      const el = document.getElementById("msg");
-      el.className = kind === "error" ? "error" : kind === "ok" ? "ok" : "muted";
-      el.textContent = text || "";
-    }
+    // ================== REGISTRAR INCIDENCIA ==================
+    async function registrarIncidencia(e) {
+      e.preventDefault();
+      setMsg("Registrando reporte...", "muted");
 
-    function hoyISO() {
-      return new Date().toISOString().slice(0,10);
+      const fecha = $("fecha_incidente");
+      const categoria = $("categoria_id");
+      const placa = $("placa");
+      const titulo = $("titulo");
+      const referencia = $("referencia_lugar");
+      const distrito = $("distrito");
+      const departamento = $("departamento");
+      const provincia = $("provincia");
+      const descripcion = $("descripcion");
+      const lat = $("lat");
+      const lng = $("lng");
+      const archivo = $("archivo");
+
+      if (!fecha.value || !categoria.value || !titulo.value.trim() || !referencia.value.trim() || !distrito.value.trim() || !descripcion.value.trim()) {
+        setMsg("Completa los campos obligatorios.", "error");
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append("fecha_incidente", fecha.value);
+      fd.append("categoria_id", categoria.value);
+
+      const placaNorm = normalizePlaca(placa.value);
+      if (placaNorm) fd.append("placa", placaNorm);
+
+      fd.append("titulo", titulo.value.trim());
+      fd.append("referencia_lugar", referencia.value.trim());
+      fd.append("distrito", distrito.value.trim());
+      fd.append("departamento", (departamento.value || "Cusco").trim());
+      fd.append("provincia", (provincia.value || "Cusco").trim());
+      fd.append("descripcion", descripcion.value.trim());
+
+      if (lat.value) fd.append("lat", lat.value);
+      if (lng.value) fd.append("lng", lng.value);
+
+      const { modo, token, user } = getModo();
+      fd.append("modo", modo);
+      // si tu backend acepta usuario_id (recomendado)
+      fd.append("usuario_id", user?.id ? String(user.id) : "");
+
+      if (archivo.files && archivo.files[0]) {
+        fd.append("archivo", archivo.files[0]); // multer.single("archivo")
+      }
+
+      const headers = {};
+      if (token && modo === "identificado") headers["Authorization"] = `Bearer ${token}`;
+
+      try {
+        // ✅ tu backend actual: POST /incidencias
+        const res = await fetch(`${API_BASE}/incidencias`, {
+          method: "POST",
+          headers,
+          body: fd
+        });
+
+        const data = await safeJson(res);
+
+        if (!res.ok || !data.ok) {
+          setMsg(data.message || `Error HTTP ${res.status}`, "error");
+          return;
+        }
+
+        setMsg(`✅ Reporte registrado correctamente (ID: ${data.id ?? "OK"}).`, "ok");
+
+        // autollenar consulta con la placa si ingresó
+        if (placaNorm) $("placaConsulta").value = placaNorm;
+
+        // reset
+        $("formInc").reset();
+        $("fecha_incidente").value = hoyISO();
+      } catch (err) {
+        console.error(err);
+        setMsg("❌ Error de conexión con el servidor (backend).", "error");
+      }
     }
 
     function limpiarFormulario() {
-      document.getElementById("fecha_incidente").value = hoyISO();
-      document.getElementById("placa").value = "";
-      document.getElementById("categoria_id").value = "";
-      document.getElementById("referencia_lugar").value = "";
-      document.getElementById("titulo").value = "";
-      document.getElementById("departamento").value = "Cusco";
-      document.getElementById("provincia").value = "Cusco";
-      document.getElementById("distrito").value = "";
-      document.getElementById("descripcion").value = "";
-      document.getElementById("archivo").value = "";
+      $("fecha_incidente").value = hoyISO();
+      $("placa").value = "";
+      $("categoria_id").value = "";
+      $("referencia_lugar").value = "";
+      $("titulo").value = "";
+      $("departamento").value = "Cusco";
+      $("provincia").value = "Cusco";
+      $("distrito").value = "";
+      $("descripcion").value = "";
+      $("archivo").value = "";
       setMsg("", "muted");
+    }
+
+    // ================== CONSULTA POR PLACA ==================
+    async function consultarPlaca() {
+      const placa = normalizePlaca($("placaConsulta").value);
+      const out = $("resultadoPlaca");
+
+      if (!placa) {
+        out.textContent = "⚠️ Ingresa una placa válida.";
+        out.className = "error";
+        return;
+      }
+
+      out.textContent = "Consultando...";
+      out.className = "muted";
+
+      try {
+        // ✅ tu backend actual: GET /incidencias/placa?placa=XXXX
+        const res = await fetch(`${API_BASE}/incidencias/placa?placa=${encodeURIComponent(placa)}`);
+        const data = await safeJson(res);
+
+        if (!res.ok || !data.ok) {
+          out.textContent = data.message || `Error HTTP ${res.status}`;
+          out.className = "error";
+          return;
+        }
+
+        if (data.reportado) {
+          out.innerHTML = `🚨 <b>PLACA REPORTADA</b><br>Registros: ${data.total ?? 0}`;
+          out.className = "error";
+        } else {
+          out.textContent = `✅ Placa ${placa} NO tiene reportes.`;
+          out.className = "ok";
+        }
+      } catch (err) {
+        console.error(err);
+        out.textContent = "❌ Error de conexión con el servidor.";
+        out.className = "error";
+      }
     }
 
     // ================== INIT ==================
     document.addEventListener("DOMContentLoaded", async () => {
       pintarModo();
 
-      // fecha por defecto
-      document.getElementById("fecha_incidente").value = hoyISO();
+      $("fecha_incidente").value = hoyISO();
 
-      // cargar mapa (cuando Leaflet ya esté)
-      // (Leaflet se cargó con defer, así que ya debería existir aquí)
+      // Leaflet cargado con defer: ya debe existir
       initMap();
 
-      // categorías desde BD
+      // cargar categorías desde tu BD
       await cargarCategorias();
 
-      // logout: si estás identificado, limpia token; si estás anónimo, solo vuelve a inicio
-      document.getElementById("logoutBtn").addEventListener("click", () => {
+      $("btnLimpiar").addEventListener("click", limpiarFormulario);
+      $("formInc").addEventListener("submit", registrarIncidencia);
+
+      $("btnConsultarPlaca").addEventListener("click", consultarPlaca);
+
+      $("logoutBtn").addEventListener("click", () => {
         if (confirm("¿Estás seguro de que quieres cerrar sesión?")) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
@@ -440,64 +555,7 @@
           window.location.href = "index.html";
         }
       });
-
-      document.getElementById("btnLimpiar").addEventListener("click", () => {
-        limpiarFormulario();
-      });
-
-      document.getElementById("formInc").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        setMsg("Enviando reporte...", "muted");
-
-        const { modo, token } = getModo();
-
-        // Armamos FormData para soportar imagen
-        const fd = new FormData();
-
-        // Campos (ajusta nombres si tu backend los espera distinto)
-        fd.append("fecha_incidente", document.getElementById("fecha_incidente").value);
-        fd.append("categoria_id", document.getElementById("categoria_id").value);
-        fd.append("placa", document.getElementById("placa").value.trim());
-        fd.append("titulo", document.getElementById("titulo").value.trim());
-        fd.append("descripcion", document.getElementById("descripcion").value.trim());
-        fd.append("referencia_lugar", document.getElementById("referencia_lugar").value.trim());
-        fd.append("departamento", document.getElementById("departamento").value.trim());
-        fd.append("provincia", document.getElementById("provincia").value.trim());
-        fd.append("distrito", document.getElementById("distrito").value.trim());
-
-        // mapa
-        fd.append("lat", document.getElementById("lat").value);
-        fd.append("lng", document.getElementById("lng").value);
-
-        // modo (para que tu backend sepa si es anónimo)
-        fd.append("modo", modo); // incognito | identificado
-
-        // evidencia
-        const file = document.getElementById("archivo").files?.[0];
-        if (file) fd.append("archivo", file);
-
-        // headers (solo Authorization si identificado)
-        const headers = {};
-        if (token && modo === "identificado") headers["Authorization"] = `Bearer ${token}`;
-
-        try {
-          const result = await crearIncidencia(fd, headers);
-
-          if (!result.ok) {
-            setMsg(result.message || "No se pudo registrar. Revisa tu API.", "error");
-            return;
-          }
-
-          setMsg("✅ Reporte registrado correctamente.", "ok");
-          // opcional: redirigir a lista de incidencias
-          // setTimeout(() => window.location.href = "lista_incidencias.html", 800);
-        } catch (err) {
-          console.error(err);
-          setMsg("❌ Error al conectar con la API (¿backend activo?).", "error");
-        }
-      });
     });
   </script>
 </body>
 </html>
-

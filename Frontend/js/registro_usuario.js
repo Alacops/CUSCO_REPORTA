@@ -1,26 +1,44 @@
 const API_BASE = "http://localhost:3000";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("btnRegistrar");
-  if (!btn) return;
+  const form = document.getElementById("formRegistro");
+  const msg = document.getElementById("msg");
 
-  btn.addEventListener("click", async (e) => {
+  const $ = (id) => document.getElementById(id);
+  const clean = (v) => String(v || "").trim();
+
+  function setMsg(text, type = "muted") {
+    msg.className = "msg " + type;
+    msg.textContent = text;
+  }
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    setMsg("Registrando usuario...", "muted");
+
+    const password = $("password").value;
+    const password2 = $("password2").value;
+
+    if (password !== password2) {
+      setMsg("Las contraseñas no coinciden.", "error");
+      return;
+    }
 
     const payload = {
-      nombre_completo: document.getElementById("nombre_completo")?.value?.trim(),
-      dni: document.getElementById("dni")?.value?.trim(),
-      email: document.getElementById("email")?.value?.trim(),
-      telefono: document.getElementById("telefono")?.value?.trim(),
-      direccion: document.getElementById("direccion")?.value?.trim(),
-      username: document.getElementById("username")?.value?.trim(),
-      password: document.getElementById("password")?.value
+      nombre_completo: clean($("nombre_completo").value),
+      dni: clean($("dni").value),
+      email: clean($("email").value),
+      telefono: clean($("telefono").value),
+      direccion: clean($("direccion").value),
+      username: clean($("username").value),
+      password: password,
+      rol_id: Number($("rol_id").value || 1)
     };
 
-    // Validación rápida
-    for (const k of Object.keys(payload)) {
-      if (!payload[k]) {
-        alert("Completa todos los campos para registrarte.");
+    // Validación real
+    for (const [k, v] of Object.entries(payload)) {
+      if (!v && k !== "rol_id") {
+        setMsg(`Falta completar: ${k}`, "error");
         return;
       }
     }
@@ -32,22 +50,29 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json().catch(() => ({}));
+      const data = await res.json();
 
       if (!res.ok || !data.ok) {
-        alert(data.message || "No se pudo registrar.");
+        setMsg(data.message || "Error al registrar usuario.", "error");
         return;
       }
 
-      // Guardar sesión
+      // 🔥 GUARDAR SESIÓN DIRECTA
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("modo_denuncia", "identificado");
 
-      // ✅ Ir directo al panel único
-      window.location.href = "./reportar_denuncia.html";
+      setMsg("Usuario registrado correctamente. Redirigiendo...", "ok");
+
+      setTimeout(() => {
+        window.location.href = "reportar_denuncia.html";
+      }, 800);
+
     } catch (err) {
       console.error(err);
-      alert("No se pudo conectar con la API. ¿Backend encendido?");
+      setMsg("No se pudo conectar con el backend.", "error");
     }
   });
 });
+
+

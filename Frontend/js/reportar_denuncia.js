@@ -1,40 +1,59 @@
-// reportar_denuncia.js (corregido + listo para consulta por placa)
-// Requisitos en tu HTML:
-// - <form id="formInc"> ... </form>
-// - inputs/selects con estos IDs:
-//   fecha_incidente, categoria_id, placa, titulo, referencia_lugar, distrito,
-//   departamento, provincia, descripcion, archivo
-// - si usas mapa: hidden/inputs lat, lng (ids: lat, lng)
-// - un elemento para mensajes: id="msg"
-// - (opcional) sección consulta por placa:
-//   input id="placaConsulta", boton id="btnConsultarPlaca", div id="resultadoPlaca"
-
 const API_BASE = "http://localhost:3000";
-
 const $ = (id) => document.getElementById(id);
 
+// =================== UI MENSAJES ===================
 function setMsg(text, kind = "muted") {
   const el = $("msg");
   if (!el) return;
-  el.className = kind; // define clases en CSS: .muted .ok .error
+  el.className = kind; // define en CSS: .muted .ok .error
   el.textContent = text || "";
 }
 
-function getUserFromStorage() {
+// =================== SESIÓN ===================
+function getSession() {
+  const token = localStorage.getItem("token");
+  let user = null;
   try {
-    const raw = localStorage.getItem("user");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
+    user = JSON.parse(localStorage.getItem("user") || "null");
+  } catch {}
+  const modo = localStorage.getItem("modo_denuncia") || (token ? "identificado" : "incognito");
+  return { token, user, modo };
+}
+
+function pintarSesionUI() {
+  const { token, user, modo } = getSession();
+
+  const nombreEl = $("nombreUsuario");
+  const rolEl = $("rolUsuario");
+  const modoBadge = $("modoBox");
+  const pillModo = $("pillModo");
+  const pillUser = $("pillUser");
+
+  if (token && user && modo === "identificado") {
+    const name = user.nombre_completo || user.username || "Usuario";
+    if (nombreEl) nombreEl.textContent = name;
+    if (rolEl) rolEl.textContent = user.rol_id === 2 ? "Administrador" : "Ciudadano";
+    if (pillModo) pillModo.textContent = "Modo: Identificado";
+    if (pillUser) pillUser.textContent = `Usuario: ${name}`;
+    if (modoBadge) {
+      modoBadge.className = "badge badge-ok";
+      modoBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Sesión identificada</span>`;
+    }
+  } else {
+    if (nombreEl) nombreEl.textContent = "Invitado";
+    if (rolEl) rolEl.textContent = "—";
+    if (pillModo) pillModo.textContent = "Modo: Anónimo";
+    if (pillUser) pillUser.textContent = "Usuario: Invitado";
+    if (modoBadge) {
+      modoBadge.className = "badge badge-warn";
+      modoBadge.innerHTML = `<i class="fa-solid fa-user-secret"></i><span>Sesión anónima</span>`;
+    }
   }
 }
 
+// =================== HELPERS ===================
 function hoyISO() {
-  const d = new Date();
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  return new Date().toISOString().slice(0, 10);
 }
 
 function normalizePlaca(p) {
@@ -45,205 +64,203 @@ function normalizePlaca(p) {
     .replace(/[^A-Z0-9-]/g, "");
 }
 
-function validateRequired(fields) {
-  for (const f of fields) {
-    if (!f || !String(f.value || "").trim()) {
-      return false;
-    }
-  }
-  return true;
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-async function safeJson(res) {
-  const ct = res.headers.get("content-type") || "";
-  if (ct.includes("application/json")) return res.json();
-  const txt = await res.text();
-  return { ok: false, message: txt || "Respuesta no JSON" };
+function fmtFecha(fecha) {
+  if (!fecha) return "—";
+  return String(fecha).slice(0, 10);
 }
 
-/* =========================
-   1) REGISTRAR INCIDENCIA
-   ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  // fecha por defecto
-  const fechaEl = $("fecha_incidente");
-  if (fechaEl && !fechaEl.value) fechaEl.value = hoyISO();
+function limpiarFormulario() {
+  if ($("fecha_incidente")) $("fecha_incidente").value = hoyISO();
+  ["placa", "titulo", "referencia_lugar", "distrito", "descripcion"].forEach((id) => {
+    const el = $(id);
+    if (el) el.value = "";
+  });
+  if ($("categoria_id")) $("categoria_id").value = "";
+  if ($("departamento")) $("departamento").value = "Cusco";
+  if ($("provincia")) $("provincia").value = "Cusco";
+  if ($("archivo")) $("archivo").value = "";
+  setMsg("", "muted");
+}
 
-  const form = $("formInc");
-  if (!form) return;
+// =================== SUBMIT INCIDENCIA ===================
+async function enviarIncidencia(e) {
+  e.preventDefault();
+  setMsg("Enviando reporte...", "muted");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    setMsg("");
+  const { user, modo } = getSession();
 
-    // Traer elementos (evita variables no definidas como "fecha", "categoria", etc.)
-    const fecha = $("fecha_incidente");
-    const categoria = $("categoria_id");
-    const placa = $("placa");
-    const titulo = $("titulo");
-    const referencia = $("referencia_lugar");
-    const distrito = $("distrito");
-    const departamento = $("departamento");
-    const provincia = $("provincia");
-    const descripcion = $("descripcion");
-    const lat = $("lat");
-    const lng = $("lng");
-    const archivo = $("archivo");
+  const fd = new FormData();
 
-    // Validación mínima (ajusta según tu BD)
-    if (!validateRequired([fecha, titulo, referencia, distrito, descripcion])) {
-      setMsg("Completa los campos obligatorios (fecha, título, referencia, distrito, descripción).", "error");
+  // Obligatorios
+  fd.append("fecha_incidente", $("fecha_incidente")?.value || "");
+  fd.append("categoria_id", $("categoria_id")?.value || "");
+  fd.append("titulo", ($("titulo")?.value || "").trim());
+  fd.append("descripcion", ($("descripcion")?.value || "").trim());
+
+  // Ubicación textual
+  fd.append("referencia_lugar", ($("referencia_lugar")?.value || "").trim());
+  fd.append("distrito", ($("distrito")?.value || "").trim());
+  fd.append("departamento", ($("departamento")?.value || "Cusco").trim());
+  fd.append("provincia", ($("provincia")?.value || "Cusco").trim());
+
+  // Placa
+  const placaNorm = normalizePlaca($("placa")?.value);
+  fd.append("placa", placaNorm);
+
+  // Coords (para geometry ubicacion en backend)
+  fd.append("lat", $("lat")?.value || "");
+  fd.append("lng", $("lng")?.value || "");
+
+  // Sesión
+  fd.append("modo", modo);
+  fd.append("usuario_id", user?.id ? String(user.id) : "");
+
+  // Evidencia
+  const file = $("archivo")?.files?.[0];
+  if (file) fd.append("archivo", file);
+
+  try {
+    const res = await fetch(`${API_BASE}/incidencias`, {
+      method: "POST",
+      body: fd, // NO Content-Type manual
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || !data.ok) {
+      setMsg(data.message || `Error HTTP ${res.status}`, "error");
       return;
     }
 
-    const fd = new FormData();
-    fd.append("fecha_incidente", fecha.value);
+    setMsg(`✅ Reporte registrado (ID: ${data.id})`, "ok");
 
-    // categoria_id puede ser null
-    if (categoria && categoria.value) fd.append("categoria_id", categoria.value);
+    // opcional: refrescar consulta por placa si hay placa
+    const placaConsulta = $("placaConsulta");
+    if (placaConsulta && placaNorm) placaConsulta.value = placaNorm;
 
-    // placa opcional (normalizada)
-    const placaNorm = normalizePlaca(placa?.value);
-    if (placaNorm) fd.append("placa", placaNorm);
+    // ir a lista para ver el registro
+    setTimeout(() => {
+      window.location.href = "lista_incidencias.html";
+    }, 600);
+  } catch (err) {
+    console.error(err);
+    setMsg("❌ No se pudo conectar con el backend. Verifica http://localhost:3000", "error");
+  }
+}
 
-    fd.append("titulo", titulo.value.trim());
-    fd.append("referencia_lugar", referencia.value.trim());
-    fd.append("distrito", distrito.value.trim());
-
-    // defaults Cusco si no existen inputs o están vacíos
-    fd.append("departamento", (departamento?.value || "Cusco").trim());
-    fd.append("provincia", (provincia?.value || "Cusco").trim());
-
-    fd.append("descripcion", descripcion.value.trim());
-
-    // coords opcional
-    if (lat && String(lat.value || "").trim()) fd.append("lat", String(lat.value).trim());
-    if (lng && String(lng.value || "").trim()) fd.append("lng", String(lng.value).trim());
-
-    // usuario_id: null si anónimo
-    const user = getUserFromStorage();
-    fd.append("usuario_id", user?.id ? String(user.id) : "");
-
-    // evidencia opcional
-    if (archivo && archivo.files && archivo.files[0]) {
-      fd.append("archivo", archivo.files[0]); // debe llamarse "archivo" para multer.single("archivo")
-    }
-
-    try {
-      setMsg("Registrando reporte...", "muted");
-
-      const res = await fetch(`${API_BASE}/incidencias`, {
-        method: "POST",
-        body: fd,
-      });
-
-      const data = await safeJson(res);
-
-      if (!res.ok || !data.ok) {
-        setMsg(data.message || `Error HTTP ${res.status}`, "error");
-        return;
-      }
-
-      setMsg(`✅ Reporte registrado correctamente (ID: ${data.id}).`, "ok");
-
-      // Opcional: autocompletar consulta por placa con la placa registrada
-      const placaConsulta = $("placaConsulta");
-      if (placaConsulta && placaNorm) placaConsulta.value = placaNorm;
-
-      // Reset sin borrar fecha (la dejamos en hoy)
-      form.reset();
-      if (fechaEl) fechaEl.value = hoyISO();
-    } catch (err) {
-      console.error(err);
-      setMsg("No se pudo conectar con el backend. Verifica que esté corriendo en http://localhost:3000", "error");
-    }
-  });
-});
-
-/* =========================
-   2) CONSULTA POR PLACA
-   =========================
-   Backend recomendado:
-   GET /incidencias/placa/:placa
-   Respuesta ejemplo:
-   { ok:true, reportado:true, total:2, incidencias:[...] }
-*/
+// =================== CONSULTA POR PLACA (DETALLE) ===================
 async function consultarPlaca() {
-  const input = $("placaConsulta");
+  const placaInput = $("placaConsulta");
   const out = $("resultadoPlaca");
 
-  if (!input) return;
-  const placa = normalizePlaca(input.value);
+  if (!placaInput || !out) return;
 
+  const placa = normalizePlaca(placaInput.value);
   if (!placa) {
-    if (out) out.textContent = "Ingresa una placa válida.";
+    out.className = "error";
+    out.textContent = "⚠️ Ingresa una placa válida.";
     return;
   }
 
-  if (out) out.textContent = "Consultando...";
+  out.className = "muted";
+  out.textContent = "Consultando...";
 
   try {
     const res = await fetch(`${API_BASE}/incidencias/placa/${encodeURIComponent(placa)}`);
-    const data = await safeJson(res);
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok || !data.ok) {
-      if (out) out.textContent = data.message || `Error HTTP ${res.status}`;
+      out.className = "error";
+      out.textContent = data.message || `Error HTTP ${res.status}`;
       return;
     }
 
-    if (data.reportado) {
-      const total = data.total ?? (data.incidencias?.length ?? 0);
-      if (out) out.textContent = `🚨 Placa ${placa} está REPORTADA. Registros: ${total}`;
-    } else {
-      if (out) out.textContent = `✅ Placa ${placa} NO tiene reportes.`;
+    if (!data.reportado) {
+      out.className = "ok";
+      out.textContent = `✅ La placa ${data.placa} NO tiene reportes registrados.`;
+      return;
     }
+
+    out.className = "error";
+    out.innerHTML = `
+      <div style="text-align:center; font-weight:900; margin-bottom:8px;">
+        🚨 <span style="color:#b00020;">PLACA REPORTADA</span><br>
+        <div style="margin-top:4px;">Placa: <b>${escapeHtml(data.placa)}</b> — Registros: <b>${data.total}</b></div>
+      </div>
+
+      <div style="display:grid; gap:10px; margin-top:10px;">
+        ${data.incidencias.map((it) => `
+          <div style="border:1px solid #eee; border-radius:12px; padding:12px; background:#fff;">
+            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+              <div style="font-weight:900; color:#8b0000;">
+                #${it.id} — ${escapeHtml(it.titulo || "Sin título")}
+              </div>
+              <div style="font-weight:800; color:#444;">
+                ${fmtFecha(it.fecha_incidente)}
+              </div>
+            </div>
+
+            <div style="margin-top:6px; color:#333;">
+              <b>Categoría:</b> ${escapeHtml(it.categoria || "—")} &nbsp; | &nbsp;
+              <b>Estado:</b> ${escapeHtml(it.estado_nombre || it.estado_codigo || "—")} &nbsp; | &nbsp;
+              <b>Tipo:</b> ${escapeHtml(it.tipo_registro || "—")}
+            </div>
+
+            <div style="margin-top:6px; color:#333;">
+              <b>Ubicación:</b> ${escapeHtml(it.referencia_lugar || "—")} — ${escapeHtml(it.distrito || "—")}
+              (${escapeHtml(it.departamento || "—")}/${escapeHtml(it.provincia || "—")})
+            </div>
+
+            <div style="margin-top:6px; color:#555;">
+              <b>Descripción:</b> ${escapeHtml(it.descripcion || "—")}
+            </div>
+
+            <div style="margin-top:6px; color:#666; font-size:.9rem;">
+              <b>Coords:</b> ${it.latitud ?? "—"}, ${it.longitud ?? "—"}
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
   } catch (err) {
     console.error(err);
-    if (out) out.textContent = "No se pudo conectar al backend para consultar la placa.";
+    out.className = "error";
+    out.textContent = "❌ Error de conexión con el servidor.";
   }
 }
-const btnConsultar = document.getElementById("btnConsultarPlaca");
-const placaConsulta = document.getElementById("placaConsulta");
-const resultadoPlaca = document.getElementById("resultadoPlaca");
 
-btnConsultar.addEventListener("click", async () => {
-  const placa = placaConsulta.value.trim();
+// =================== INIT ===================
+document.addEventListener("DOMContentLoaded", () => {
+  pintarSesionUI();
 
-  if (!placa) {
-    resultadoPlaca.textContent = "⚠️ Ingresa una placa válida.";
-    resultadoPlaca.className = "error";
-    return;
-  }
+  // fecha por defecto
+  if ($("fecha_incidente") && !$("fecha_incidente").value) $("fecha_incidente").value = hoyISO();
 
-  resultadoPlaca.textContent = "Consultando...";
-  resultadoPlaca.className = "muted";
+  // listeners
+  $("formInc")?.addEventListener("submit", enviarIncidencia);
+  $("btnLimpiar")?.addEventListener("click", limpiarFormulario);
 
-  try {
-    const res = await fetch(`http://localhost:3000/incidencias/placa/${placa}`);
-    const data = await res.json();
+  $("logoutBtn")?.addEventListener("click", () => {
+    if (!confirm("¿Cerrar sesión?")) return;
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.setItem("modo_denuncia", "incognito");
+    window.location.href = "index.html";
+  });
 
-    if (!data.ok) {
-      resultadoPlaca.textContent = "❌ No se pudo realizar la consulta.";
-      resultadoPlaca.className = "error";
-      return;
-    }
-
-    if (data.reportado) {
-      resultadoPlaca.innerHTML = `
-        🚨 <strong>PLACA REPORTADA</strong><br>
-        Total reportes: ${data.total}
-      `;
-      resultadoPlaca.className = "error";
-    } else {
-      resultadoPlaca.textContent = "✅ La placa NO tiene reportes registrados.";
-      resultadoPlaca.className = "ok";
-    }
-
-  } catch (err) {
-    console.error(err);
-    resultadoPlaca.textContent = "❌ Error de conexión con el servidor.";
-    resultadoPlaca.className = "error";
-  }
+  $("btnConsultarPlaca")?.addEventListener("click", consultarPlaca);
 });
 
-});
+
+
+
+
