@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3000";
+
 const $ = (id) => document.getElementById(id);
 
 // =================== UI MENSAJES ===================
