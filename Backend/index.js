@@ -12,36 +12,51 @@ import categoriasRouter from "./routes/categorias_incidencia.js";
 dotenv.config();
 
 const app = express();
+
+// 🔐 MIDDLEWARES
 app.use(cors());
 app.use(express.json());
 
-// prueba conexión
-
-// Ruta auth
-// Para servir imágenes (uploads)
+// 📁 Archivos subidos
 app.use("/uploads", express.static("uploads"));
-app.use("/auth", authRoutes);
-app.use("/incidencias", incidenciasRouter);
-app.use("/incidencias", incidenciasCreateRouter);
-app.use("/incidencias", incidenciasPlacaRouter);
-app.use("/categorias_incidencia", categoriasRouter);
 
-app.get("/ping", async (req, res) => {
-  const [rows] = await pool.query("SELECT 1 AS ok");
-  res.json({ ok: true, rows });
+// ===============================
+// 🔗 RUTAS API (TODAS BAJO /api)
+// ===============================
+app.use("/api/auth", authRoutes);
+app.use("/api/incidencias", incidenciasRouter);
+app.use("/api/incidencias", incidenciasCreateRouter);
+app.use("/api/incidencias", incidenciasPlacaRouter);
+app.use("/api/categorias", categoriasRouter);
+
+// ===============================
+// 🩺 HEALTH CHECK (Render)
+// ===============================
+app.get("/", (req, res) => {
+  res.json({
+    status: "OK",
+    service: "CUSCO_REPORTA API",
+    environment: process.env.NODE_ENV || "production"
+  });
 });
 
-// listar incidencias (para mapa/panel)
-app.get("/incidencias", async (req, res) => {
-  const [rows] = await pool.query(`
-    SELECT *
-    FROM vw_incidencias_panel
-    ORDER BY creado_en DESC
-    LIMIT 200
-  `);
-  res.json(rows);
+// ===============================
+// 🔌 PRUEBA MYSQL
+// ===============================
+app.get("/api/ping", async (req, res) => {
+  try {
+    const [rows] = await pool.query("SELECT 1 AS ok");
+    res.json({ ok: true });
+  } catch (error) {
+    res.status(500).json({ error: "DB connection failed" });
+  }
 });
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`API corriendo en http://localhost:${process.env.PORT || 3000}`);
+// ===============================
+// 🚀 SERVER
+// ===============================
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 API corriendo en puerto ${PORT}`);
 });
