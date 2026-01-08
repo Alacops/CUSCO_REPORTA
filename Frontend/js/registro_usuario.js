@@ -1,5 +1,3 @@
-const API_BASE = "http://localhost:3000";
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("formRegistro");
   const msg = document.getElementById("msg");
