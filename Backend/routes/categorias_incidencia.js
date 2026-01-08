@@ -1,18 +1,30 @@
 import express from "express";
-import pool from "../db.js";
 
 const router = express.Router();
 
-// GET /categorias_incidencia
+// GET /api/categorias
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      "SELECT id, nombre FROM categorias_incidencia ORDER BY nombre ASC"
-    );
-    return res.json({ ok: true, categorias: rows });
+    // 🔥 MODO DEMO (sin MySQL)
+    const categoriasDemo = [
+      { id: 1, nombre: "Accidente de tránsito" },
+      { id: 2, nombre: "Robo" },
+      { id: 3, nombre: "Violencia" },
+      { id: 4, nombre: "Obras públicas" },
+      { id: 5, nombre: "Emergencia médica" },
+    ];
+
+    return res.json({
+      ok: true,
+      categorias: categoriasDemo,
+      demo: true
+    });
   } catch (err) {
     console.error("CATEGORIAS ERROR:", err);
-    return res.status(500).json({ ok: false, message: "Error al listar categorías" });
+    return res.status(500).json({
+      ok: false,
+      message: "Error al listar categorías"
+    });
   }
 });
 
